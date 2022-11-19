@@ -7,6 +7,11 @@ class CustomerDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer();
+    return Theme(
+      data: ThemeData.dark(),
+      child: Drawer(
+        backgroundColor: Colors.black,
+      ),
+    );
   }
 }

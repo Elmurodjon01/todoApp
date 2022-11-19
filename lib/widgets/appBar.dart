@@ -8,6 +8,8 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       actions: [
         IconButton(
           onPressed: () {},
@@ -17,7 +19,13 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
             size: 30,
           ),
         ),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.more_vert,
+            color: Colors.black,
+          ),
+        ),
       ],
     );
   }
