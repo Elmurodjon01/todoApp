@@ -81,9 +81,30 @@ class ItemContainer extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.star_outline))
+                      onPressed: () {},
+                      icon: const Icon(Icons.edit),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Added to importants list'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.star_outline),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Note deleted'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.delete),
+                    ),
                   ],
                 ),
               ],

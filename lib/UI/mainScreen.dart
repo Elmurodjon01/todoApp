@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:todoapp/widgets/itemContainer.dart';
+import '../widgets/addButton.dart';
 import '../widgets/appBar.dart';
 import '../widgets/drawer.dart';
 
@@ -19,6 +20,7 @@ class MainScreen extends StatelessWidget {
       appBar: CustomAppBar(),
       drawer: CustomerDrawer(),
       body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           MasonryGridView.count(
             crossAxisCount: 2,
@@ -30,12 +32,9 @@ class MainScreen extends StatelessWidget {
                 label: 'do assignment',
                 mainText: 'due soon',
               );
-              // return Tile(
-              //   index: index,
-              //   extent: (index % 5 + 1) * 100,
-              // );
             },
           ),
+          AddButton(context),
         ],
       ),
     );
