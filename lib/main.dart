@@ -3,6 +3,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/UI/addScreen.dart';
 import 'package:todoapp/UI/mainScreen.dart';
+import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
 
 void main() async {
@@ -10,6 +11,7 @@ void main() async {
   await Hive.openBox('Notes');
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (BuildContext context) => NoteProvider()),
+    ChangeNotifierProvider(create: (BuildContext context) => HiveDB()),
   ], child: const MyApp()));
 }
 

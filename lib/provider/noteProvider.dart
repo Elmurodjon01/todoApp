@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../model/note_model.dart';
+
 class NoteProvider extends ChangeNotifier {
   // List<ToDo> _todos = [];
   // List<ToDo> get todos => _todos;
@@ -19,13 +21,13 @@ class NoteProvider extends ChangeNotifier {
   //   _todos.remove(todo);
   //   notifyListeners();
   // }
-  List<ToDo> todos = [
-    ToDo(title: "go shopping"),
-    ToDo(title: "buy a gift"),
-    ToDo(title: "repair the car"),
+  List<NoteModel> todos = [
+    NoteModel(title: "go shopping", mainText: 'fbdisfuiiejwjwofehwfe'),
+    NoteModel(title: "buy a gift", mainText: 'fbdisfuiiejwjwofehwfe'),
+    NoteModel(title: "repair the car", mainText: 'fbdisfuiiejwjwofehwfe'),
   ];
 
-  void addTasks(ToDo todo) {
+  void addTasks(NoteModel todo) {
     todos.add(todo);
     notifyListeners();
   }
@@ -35,22 +37,22 @@ class NoteProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void deletTask(ToDo todo) {
+  void deletTask(NoteModel todo) {
     todos.remove(todo);
     notifyListeners();
   }
 }
 
-class ToDo {
-  // DateTime createdTime;
-  String title;
-  // String? mainText;
-  // String? id;
-  // bool? isDone = false;
-  ToDo({
-    required this.title,
-    // this.mainText,
-    // this.id,
-    // this.isDone = false,
-  });
-}
+// class NoteModel {
+//   // DateTime createdTime;
+//   String title;
+//   String mainText;
+//   // String? id;
+//   // bool? isDone = false;
+//   NoteModel({
+//     required this.title,
+//     required this.mainText,
+//     // this.id,
+//     // this.isDone = false,
+//   });
+// }

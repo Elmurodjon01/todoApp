@@ -22,7 +22,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<NoteProvider>(context, listen: false);
     // var loadInfo = HiveDB().loadUser();
     var tasks = context.watch<NoteProvider>();
     return Scaffold(
@@ -38,7 +37,14 @@ class _MainScreenState extends State<MainScreen> {
               itemCount: tasks.todos.length,
               itemBuilder: ((context, index) {
                 return ItemContainer(
-                    label: tasks.todos[index].title, mainText: ' mainText');
+                  label: tasks.todos[index].title,
+                  mainText: tasks.todos[index].mainText,
+                  onDeleted: () {
+                    tasks.deletTask(tasks.todos[index]);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text('Note Deleted')));
+                  },
+                );
               })),
           AddButton(context),
         ],

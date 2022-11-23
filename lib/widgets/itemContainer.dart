@@ -7,11 +7,13 @@ import 'package:todoapp/constants/constants.dart';
 class ItemContainer extends StatelessWidget {
   String label;
   String mainText;
+  VoidCallback onDeleted;
 
   ItemContainer({
     Key? key,
     required this.label,
     required this.mainText,
+    required this.onDeleted,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -96,13 +98,7 @@ class ItemContainer extends StatelessWidget {
                       icon: const Icon(Icons.star_outline),
                     ),
                     IconButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Note deleted'),
-                          ),
-                        );
-                      },
+                      onPressed: onDeleted,
                       icon: const Icon(Icons.delete),
                     ),
                   ],

@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/constants/constants.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/main.dart';
 import 'package:todoapp/model/note_model.dart';
+import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
 
 class AddScreen extends StatefulWidget {
@@ -17,26 +19,22 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
-  List<dynamic> myList = [];
-
-  List<String> labels = [
-    'fnjnjdkf',
-    'fdsnfksjd',
-    'biwuebfgbf',
-    'fbiewwf',
-    'fnewkwe',
-  ];
   String title = '';
   String mainText = '';
   void onAdd() {
     // final String textVal = taskTitleController.text;
     // final bool completed = completedStatus;
     if (title.isNotEmpty) {
-      final ToDo todo = ToDo(
+      final NoteModel todo = NoteModel(
         title: title,
-        // mainText: mainText,
+
+        mainText: mainText,
         // createdTime: DateTime.now(),
       );
+      // Provider.of<HiveDB>(context, listen: false).storeUser(todo);
+      var box = Hive.box('Notes');
+      box.put('title', title);
+      box.put('mainText', mainText);
       Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
       Navigator.pop(context);
     }
@@ -49,100 +47,102 @@ class _AddScreenState extends State<AddScreen> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.arrow_back_ios),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        title = value;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Title',
-                      hintStyle: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18),
-                    ),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: onAdd,
+                    icon: const Icon(Icons.arrow_back_ios),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 50),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.star_border_outlined),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.add_photo_alternate),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Divider(),
-            Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Container(
-                  width: width,
-                  height: height / 2,
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: TextFormField(
-                      maxLines: 20,
-                      validator: (value) {
-                        if (value == null) {
-                          return 'The body cannot be empty';
-                        }
-                        return null;
-                      },
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: TextField(
                       onChanged: (value) {
                         setState(() {
-                          mainText = value;
+                          title = value;
                         });
                       },
-                      autofocus: true,
                       decoration: const InputDecoration(
-                        hintText: 'body',
                         border: InputBorder.none,
+                        hintText: 'Title',
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18),
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: onAdd,
-                  child: Container(
-                    height: height / 18,
-                    width: width / 3,
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(20),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.star_border_outlined),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add_photo_alternate),
+                        ),
+                      ],
                     ),
-                    child: const Center(
-                      child: Text(
-                        'Save',
-                        style: kLabelStyle,
+                  ),
+                ],
+              ),
+              const Divider(),
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Container(
+                    width: width,
+                    height: height / 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextFormField(
+                        maxLines: 20,
+                        validator: (value) {
+                          if (value == null) {
+                            return 'The body cannot be empty';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            mainText = value;
+                          });
+                        },
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                          hintText: 'body',
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  GestureDetector(
+                    onTap: onAdd,
+                    child: Container(
+                      height: height / 18,
+                      width: width / 3,
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Save',
+                          style: kLabelStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
