@@ -1,12 +1,51 @@
-import 'package:flutter/material.dart';
-import 'package:todoapp/constants/constants.dart';
+import 'dart:convert';
 
-class AddScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/constants/constants.dart';
+import 'package:todoapp/hive/database.dart';
+import 'package:todoapp/main.dart';
+import 'package:todoapp/model/note_model.dart';
+import 'package:todoapp/provider/noteProvider.dart';
+
+class AddScreen extends StatefulWidget {
   AddScreen({super.key});
-  TextEditingController _controller = TextEditingController();
+
+  @override
+  State<AddScreen> createState() => _AddScreenState();
+}
+
+class _AddScreenState extends State<AddScreen> {
+  List<dynamic> myList = [];
+
+  List<String> labels = [
+    'fnjnjdkf',
+    'fdsnfksjd',
+    'biwuebfgbf',
+    'fbiewwf',
+    'fnewkwe',
+  ];
+  String title = '';
+  String mainText = '';
+  void onAdd() {
+    // final String textVal = taskTitleController.text;
+    // final bool completed = completedStatus;
+    if (title.isNotEmpty) {
+      final ToDo todo = ToDo(
+        title: title,
+        // mainText: mainText,
+        // createdTime: DateTime.now(),
+      );
+      Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<NoteProvider>(context, listen: false);
+
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -16,13 +55,17 @@ class AddScreen extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: onAdd,
                   icon: const Icon(Icons.arrow_back_ios),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 2,
                   child: TextField(
-                    controller: _controller,
+                    onChanged: (value) {
+                      setState(() {
+                        title = value;
+                      });
+                    },
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Title',
@@ -59,25 +102,41 @@ class AddScreen extends StatelessWidget {
                   height: height / 2,
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: TextField(
+                    child: TextFormField(
+                      maxLines: 20,
+                      validator: (value) {
+                        if (value == null) {
+                          return 'The body cannot be empty';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          mainText = value;
+                        });
+                      },
                       autofocus: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
+                        hintText: 'body',
                         border: InputBorder.none,
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  height: height / 18,
-                  width: width / 3,
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Save',
-                      style: kLabelStyle,
+                GestureDetector(
+                  onTap: onAdd,
+                  child: Container(
+                    height: height / 18,
+                    width: width / 3,
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Save',
+                        style: kLabelStyle,
+                      ),
                     ),
                   ),
                 ),
