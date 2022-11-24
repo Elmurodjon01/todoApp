@@ -21,11 +21,7 @@ class NoteProvider extends ChangeNotifier {
   //   _todos.remove(todo);
   //   notifyListeners();
   // }
-  List<NoteModel> todos = [
-    NoteModel(title: "go shopping", mainText: 'fbdisfuiiejwjwofehwfe'),
-    NoteModel(title: "buy a gift", mainText: 'fbdisfuiiejwjwofehwfe'),
-    NoteModel(title: "repair the car", mainText: 'fbdisfuiiejwjwofehwfe'),
-  ];
+  List<NoteModel> todos = [];
 
   void addTasks(NoteModel todo) {
     todos.add(todo);

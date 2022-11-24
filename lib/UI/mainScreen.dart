@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/note_model.dart';
+import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
 import 'package:todoapp/widgets/itemContainer.dart';
 import '../widgets/addButton.dart';
@@ -20,32 +23,62 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  late Box notesBox;
+  @override
+  void initState() {
+    notesBox = Hive.box<NoteModel>('Notes');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // var loadInfo = HiveDB().loadUser();
-    var tasks = context.watch<NoteProvider>();
+
     return Scaffold(
       appBar: CustomAppBar(),
       drawer: CustomerDrawer(),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          MasonryGridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 2,
-              crossAxisSpacing: 2,
-              itemCount: tasks.todos.length,
-              itemBuilder: ((context, index) {
-                return ItemContainer(
-                  label: tasks.todos[index].title,
-                  mainText: tasks.todos[index].mainText,
-                  onDeleted: () {
-                    tasks.deletTask(tasks.todos[index]);
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('Note Deleted')));
-                  },
+          ValueListenableBuilder(
+            valueListenable: notesBox.listenable(),
+            builder: (BuildContext context, Box taskList, Widget? child) {
+              if (notesBox.length > 1) {
+                return MasonryGridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 2,
+                    crossAxisSpacing: 2,
+                    itemCount: notesBox.length,
+                    itemBuilder: ((context, index) {
+                      final data = notesBox.get(index);
+                      if (data == null) {
+                        return const Center(
+                          child: Text(
+                            'no notes',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        );
+                      } else {
+                        return ItemContainer(
+                          label: data.title,
+                          mainText: data.mainText,
+                          onDeleted: () async {
+                            await notesBox.deleteAt(index);
+                            // tasks.deletTask(tasks.todos[index]);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Note Deleted')));
+                          },
+                        );
+                      }
+                      //  var tasks = note.values.toList();
+                    }));
+              } else {
+                return Center(
+                  child: Text('No notes available'),
                 );
-              })),
+              }
+            },
+          ),
           AddButton(context),
         ],
       ),

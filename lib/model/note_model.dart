@@ -1,5 +1,12 @@
+import 'package:hive/hive.dart';
+
+part "note_model.g.dart";
+
+@HiveType(typeId: 1)
 class NoteModel {
+  @HiveField(0)
   String title;
+  @HiveField(1)
   String mainText;
   // String id;
   // DateTime time;
@@ -9,16 +16,4 @@ class NoteModel {
     // required this.id,
     // required this.time,
   });
-  NoteModel.fromJson(Map<String, dynamic> json)
-      : title = json['label'],
-        mainText = json['mainText'];
-  // time = json['time'];
-  // id = json['id'];
-
-  Map<String, dynamic> toJson() => {
-        'label': title,
-        'mainText': mainText,
-        // 'id': id,
-        // 'time': time,
-      };
 }

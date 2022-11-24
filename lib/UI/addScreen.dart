@@ -27,15 +27,15 @@ class _AddScreenState extends State<AddScreen> {
     if (title.isNotEmpty) {
       final NoteModel todo = NoteModel(
         title: title,
-
         mainText: mainText,
         // createdTime: DateTime.now(),
       );
       // Provider.of<HiveDB>(context, listen: false).storeUser(todo);
-      var box = Hive.box('Notes');
-      box.put('title', title);
-      box.put('mainText', mainText);
-      Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
+      // var box = Hive.box('Notes');
+      // box.put('title', title);
+      // box.put('mainText', mainText);
+      // Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
+      HiveDB().addTask(todo);
       Navigator.pop(context);
     }
   }
