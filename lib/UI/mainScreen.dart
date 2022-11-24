@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
           ValueListenableBuilder(
             valueListenable: notesBox.listenable(),
             builder: (BuildContext context, Box taskList, Widget? child) {
-              if (notesBox.length > 1) {
+              if (notesBox.length > 0) {
                 return MasonryGridView.count(
                     crossAxisCount: 2,
                     mainAxisSpacing: 2,
@@ -52,11 +52,8 @@ class _MainScreenState extends State<MainScreen> {
                     itemBuilder: ((context, index) {
                       final data = notesBox.get(index);
                       if (data == null) {
-                        return const Center(
-                          child: Text(
-                            'no notes',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        return Center(
+                          child: Text('no data'),
                         );
                       } else {
                         return ItemContainer(
@@ -72,10 +69,16 @@ class _MainScreenState extends State<MainScreen> {
                       }
                       //  var tasks = note.values.toList();
                     }));
-              } else {
-                return Center(
-                  child: Text('No notes available'),
+              } else if (notesBox.isEmpty || notesBox == null) {
+                return const Center(
+                  child: Icon(
+                    Icons.sentiment_dissatisfied,
+                    size: 150,
+                    color: Colors.black,
+                  ),
                 );
+              } else {
+                return CircularProgressIndicator();
               }
             },
           ),

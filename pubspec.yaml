@@ -44,6 +44,8 @@ dependencies:
   shared_preferences: ^2.0.15
   hive_generator: ^2.0.0
   path_provider: ^2.0.11
+  splashscreen: ^1.3.5
+  easy_splash_screen: ^1.0.4
 
 dev_dependencies:
   flutter_test:

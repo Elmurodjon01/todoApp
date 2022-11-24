@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/UI/addScreen.dart';
 import 'package:todoapp/UI/mainScreen.dart';
+import 'package:todoapp/UI/splashScreen.dart';
+import 'package:todoapp/hive/themeManager.dart';
 import 'package:todoapp/model/note_model.dart';
 import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
@@ -28,6 +30,7 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (BuildContext context) => NoteProvider()),
     ChangeNotifierProvider(create: (BuildContext context) => HiveDB()),
+    ChangeNotifierProvider(create: (BuildContext context) => ThemeNotifier()),
   ], child: const MyApp()));
 }
 
@@ -36,14 +39,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: provider.getTheme(),
       initialRoute: '/',
       routes: {
-        '/': (context) => MainScreen(),
+        '/': (context) => SplashFuturePage(),
+        '/home': (context) => MainScreen(),
         '/addScreen': (context) => AddScreen(),
       },
     );

@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import '../model/note_model.dart';
 
 class NoteProvider extends ChangeNotifier {
+  bool _isnight = false;
+  bool get isnight => _isnight;
+  void isNight(bool night) {
+    _isnight = night;
+  }
   // List<ToDo> _todos = [];
   // List<ToDo> get todos => _todos;
 
@@ -14,29 +19,29 @@ class NoteProvider extends ChangeNotifier {
   // void toggleTodo(ToDo todo) {
   //   final taskIndex = _todos.indexOf(todo);
   //   // _todos[taskIndex].toggleCompleted();
+  // //   notifyListeners();
+  // // }
+
+  // // void deleteTodo(ToDo todo) {
+  // //   _todos.remove(todo);
+  // //   notifyListeners();
+  // // }
+  // List<NoteModel> todos = [];
+
+  // void addTasks(NoteModel todo) {
+  //   todos.add(todo);
   //   notifyListeners();
   // }
 
-  // void deleteTodo(ToDo todo) {
-  //   _todos.remove(todo);
+  // // void updateTasks(Task task) {
+  // //   task.doneChange();
+  // //   notifyListeners();
+  // // }
+
+  // void deletTask(NoteModel todo) {
+  //   todos.remove(todo);
   //   notifyListeners();
   // }
-  List<NoteModel> todos = [];
-
-  void addTasks(NoteModel todo) {
-    todos.add(todo);
-    notifyListeners();
-  }
-
-  // void updateTasks(Task task) {
-  //   task.doneChange();
-  //   notifyListeners();
-  // }
-
-  void deletTask(NoteModel todo) {
-    todos.remove(todo);
-    notifyListeners();
-  }
 }
 
 // class NoteModel {
