@@ -17,7 +17,7 @@ class _SplashFuturePageState extends State<SplashFuturePage> {
       logo: Image.network(
           'https://icons.iconarchive.com/icons/inipagi/job-seeker/512/note-icon.png'),
       title: Text(
-        "Title",
+        "Enjoy taking notes!",
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -27,7 +27,7 @@ class _SplashFuturePageState extends State<SplashFuturePage> {
       showLoader: true,
       loadingText: Text("Loading..."),
       navigator: MainScreen(),
-      durationInSeconds: 5,
+      durationInSeconds: 3,
     );
   }
 }
