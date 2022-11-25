@@ -27,7 +27,7 @@ class _SplashFuturePageState extends State<SplashFuturePage> {
       showLoader: true,
       loadingText: Text("Loading..."),
       navigator: MainScreen(),
-      durationInSeconds: 3,
+      durationInSeconds: 2,
     );
   }
 }

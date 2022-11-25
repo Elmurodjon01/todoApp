@@ -53,11 +53,17 @@ class _AddScreenState extends State<AddScreen> {
             children: [
               Row(
                 children: [
-                  IconButton(
-                    onPressed: onAdd,
-                    icon: const Icon(Icons.arrow_back_ios),
-                  ),
-                  SizedBox(
+                  // GestureDetector(
+                  //   onTap: onAdd,
+                  //   child: IconButton(
+                  //     onPressed: () {},
+                  //     icon: const Icon(Icons.arrow_back_ios),
+                  //   ),
+                  // ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                    ),
                     width: MediaQuery.of(context).size.width / 2,
                     child: TextField(
                       onChanged: (value) {
@@ -74,6 +80,9 @@ class _AddScreenState extends State<AddScreen> {
                             fontSize: 18),
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.1,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 50),
@@ -93,10 +102,13 @@ class _AddScreenState extends State<AddScreen> {
                 ],
               ),
               const Divider(),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.3,
+              ),
               Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
-                  Container(
+                  SizedBox(
                     width: width,
                     height: height / 2,
                     child: Padding(
@@ -116,7 +128,7 @@ class _AddScreenState extends State<AddScreen> {
                         },
                         autofocus: true,
                         decoration: const InputDecoration(
-                          hintText: 'body',
+                          hintText: 'Type something here',
                           border: InputBorder.none,
                         ),
                       ),

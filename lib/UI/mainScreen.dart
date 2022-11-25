@@ -52,8 +52,11 @@ class _MainScreenState extends State<MainScreen> {
                     itemBuilder: ((context, index) {
                       final data = notesBox.get(index);
                       if (data == null) {
-                        return Center(
-                          child: Text('no data'),
+                        return const Center(
+                          child: Text(
+                            'no data',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         );
                       } else {
                         return ItemContainer(

@@ -13,13 +13,13 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     return Consumer<ThemeNotifier>(
       builder: (context, value, child) {
         return AppBar(
+          backgroundColor: Colors.orange,
           elevation: 0,
           actions: [
             IconButton(
               onPressed: () {},
               icon: const Icon(
                 Icons.search,
-                color: Colors.black,
                 size: 30,
               ),
             ),
@@ -30,7 +30,6 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
               },
               icon: const Icon(
                 Icons.more_vert,
-                color: Colors.black,
               ),
             ),
             IconButton(
@@ -40,7 +39,6 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
               },
               icon: const Icon(
                 Icons.nightlight,
-                color: Colors.black,
               ),
             ),
           ],
