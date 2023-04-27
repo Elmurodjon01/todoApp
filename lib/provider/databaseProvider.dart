@@ -3,40 +3,26 @@ import 'package:hive/hive.dart';
 import 'package:todoapp/model/note_model.dart';
 
 class HiveDB extends ChangeNotifier {
-  ValueNotifier<List<NoteModel>> tasklistNotifier = ValueNotifier([]);
-  // var box = Hive.box('Notes');
+  List<NoteModel> _notes = [];
+  List get notes => _notes;
 
-  // storeUser(NoteModel noteModel) {
-  //   box.put('noteModel', noteModel.toJson());
-  // }
-
-  // NoteModel loadNote() {
-  //   var noteModel = NoteModel.fromJson(box.get('noteModel'));
-  //   return noteModel;
-  // }
-
-  // deleteNote() {
-  //   box.delete('noteModel');
-  // }
-  void addTask(NoteModel value) async {
-    final taskDb = await Hive.openBox<NoteModel>('Notes');
-    final _id = await taskDb.add(value);
-
-    await taskDb.put('Notes', value);
-    tasklistNotifier.value.add(value);
-    tasklistNotifier.notifyListeners();
+  void writeData(String title, String desc) {
+    var box = Hive.box('Notes');
+    var data = box.put('todos', NoteModel(title: title, mainText: desc));
+    // savedTodos.add(data);
+    notifyListeners();
   }
 
-  getallTasks() async {
-    final taskDb = await Hive.openBox<NoteModel>('Notes');
-    tasklistNotifier.value.clear();
-    tasklistNotifier.value.addAll(taskDb.values);
-    tasklistNotifier.notifyListeners();
+  void savedData() {
+    Box box = Hive.box('Notes');
+    NoteModel todos = box.get('todos');
+
+    notes.add(todos);
+    notifyListeners();
   }
 
   deleteTask(int id) async {
-    final taskDb = await Hive.openBox<NoteModel>('Notes');
-    await taskDb.delete(id);
-    getallTasks();
+    // final taskDb = await Hive.openBox<NoteModel>('Notes');
+    // await myBox.delete(id);
   }
 }

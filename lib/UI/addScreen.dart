@@ -1,48 +1,27 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/constants/constants.dart';
-import 'package:todoapp/hive/database.dart';
-import 'package:todoapp/main.dart';
 import 'package:todoapp/model/note_model.dart';
 import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
 
 class AddScreen extends StatefulWidget {
-  AddScreen({super.key});
+  const AddScreen({super.key});
 
   @override
   State<AddScreen> createState() => _AddScreenState();
 }
 
 class _AddScreenState extends State<AddScreen> {
-  String title = '';
-  String mainText = '';
-  void onAdd() {
-    // final String textVal = taskTitleController.text;
-    // final bool completed = completedStatus;
-    if (title.isNotEmpty) {
-      final NoteModel todo = NoteModel(
-        title: title,
-        mainText: mainText,
-        // createdTime: DateTime.now(),
-      );
-      // Provider.of<HiveDB>(context, listen: false).storeUser(todo);
-      // var box = Hive.box('Notes');
-      // box.put('title', title);
-      // box.put('mainText', mainText);
-      // Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
-      HiveDB().addTask(todo);
-      Navigator.pop(context);
-    }
-  }
+  // String title = '';
+  // String mainText = '';
+  // void onAdd() {}
 
+  TextEditingController titleController = TextEditingController();
+  TextEditingController mainTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<NoteProvider>(context, listen: false);
+    var provider = Provider.of<HiveDB>(context);
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -66,11 +45,7 @@ class _AddScreenState extends State<AddScreen> {
                     ),
                     width: MediaQuery.of(context).size.width / 2,
                     child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          title = value;
-                        });
-                      },
+                      controller: titleController,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Title',
@@ -121,11 +96,7 @@ class _AddScreenState extends State<AddScreen> {
                           }
                           return null;
                         },
-                        onChanged: (value) {
-                          setState(() {
-                            mainText = value;
-                          });
-                        },
+                        controller: mainTextController,
                         autofocus: true,
                         decoration: const InputDecoration(
                           hintText: 'Type something here',
@@ -135,7 +106,20 @@ class _AddScreenState extends State<AddScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: onAdd,
+                    onTap: () {
+                      // final String textVal = taskTitleController.text;
+                      // final bool completed = completedStatus;
+                      if (titleController.text.isNotEmpty) {
+                        // Provider.of<HiveDB>(context, listen: false).storeUser(todo);
+                        // var box = Hive.box('Notes');
+                        // box.put('title', title);
+                        // box.put('mainText', mainText);
+                        // Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
+                        provider.writeData(
+                            titleController.text, mainTextController.text);
+                        Navigator.pop(context);
+                      }
+                    },
                     child: Container(
                       height: height / 18,
                       width: width / 3,
