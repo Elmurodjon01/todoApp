@@ -22,7 +22,7 @@ class ItemContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer(
       duration: const Duration(seconds: 2),
-      color: Color.fromARGB(255, 107, 101, 101),
+      color: const Color.fromARGB(255, 107, 101, 101),
       child: Stack(
         alignment: Alignment.center,
         children: [

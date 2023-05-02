@@ -6,7 +6,6 @@ import 'package:todoapp/model/note_model.dart';
 import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/widgets/itemContainer.dart';
 import '../widgets/addButton.dart';
-import '../widgets/appBar.dart';
 import '../widgets/drawer.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,36 +17,50 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   @override
-  // void initState() {
-  //   // notesBox = Hive.box<NoteModel>('Notes');
-  //   super.initState();
-  // }
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final provider = Provider.of<HiveDB>(context, listen: false);
+      provider.loadTodo();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     // var loadInfo = HiveDB().loadUser();
     final provider = Provider.of<HiveDB>(context);
-    // var box = Hive.box('Notes');
-    List<NoteModel> info = [];
-    var data = provider.notes;
-    Box box = Hive.box('Notes');
-    var infoo = box.get('todos');
-
-    data.add(infoo);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: TextButton(
+          child: const Text(
+            'call',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () => provider.loadTodo(),
+        ),
+      ),
       drawer: const CustomerDrawer(),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           ListView.builder(
-            itemCount: data.length,
+            itemCount: provider.notes.length,
             itemBuilder: (context, index) {
+              var data = provider.notes;
               return ItemContainer(
-                  label: data[index].title,
-                  mainText: data[index].mainText,
-                  onDeleted: () {});
+                label: data[index].title,
+                mainText: data[index].mainText,
+                onDeleted: () {
+                  provider.deleteTodo(index);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Todo is removed'),
+                    ),
+                  );
+                },
+              );
             },
           ),
           // ListView.builder(

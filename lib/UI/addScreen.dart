@@ -32,13 +32,6 @@ class _AddScreenState extends State<AddScreen> {
             children: [
               Row(
                 children: [
-                  // GestureDetector(
-                  //   onTap: onAdd,
-                  //   child: IconButton(
-                  //     onPressed: () {},
-                  //     icon: const Icon(Icons.arrow_back_ios),
-                  //   ),
-                  // ),
                   Container(
                     padding: const EdgeInsets.only(
                       left: 15,
@@ -115,8 +108,16 @@ class _AddScreenState extends State<AddScreen> {
                         // box.put('title', title);
                         // box.put('mainText', mainText);
                         // Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
-                        provider.writeData(
-                            titleController.text, mainTextController.text);
+                        provider.notes.add(
+                          NoteModel(
+                            title: titleController.text.trim().toString(),
+                            mainText: mainTextController.text.trim().toString(),
+                          ),
+                        );
+                        titleController.clear();
+                        mainTextController.clear();
+                        provider.updateTodo();
+                        // provider.saveTodos();
                         Navigator.pop(context);
                       }
                     },
