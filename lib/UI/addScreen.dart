@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todoapp/constants/constants.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/note_model.dart';
-import 'package:todoapp/provider/noteProvider.dart';
+import 'package:todoapp/provider/Apptheme_provider.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -13,15 +13,12 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
-  // String title = '';
-  // String mainText = '';
-  // void onAdd() {}
-
   TextEditingController titleController = TextEditingController();
   TextEditingController mainTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<Database>(context);
+    final appTheme = Provider.of<AppTheme>(context);
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -70,9 +67,9 @@ class _AddScreenState extends State<AddScreen> {
                 ],
               ),
               const Divider(),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
-              ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.3,
+              // ),
               Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
@@ -98,33 +95,63 @@ class _AddScreenState extends State<AddScreen> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      if (titleController.text.isNotEmpty) {
-                        provider.addItem(
-                          NoteModel(
-                              title: titleController.text,
-                              mainText: mainTextController.text),
-                        );
-                        provider.getItem();
-                        titleController.clear();
-                        mainTextController.clear();
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Container(
-                      height: height / 18,
-                      width: width / 3,
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Save',
-                          style: kLabelStyle,
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: height / 18,
+                            width: width / 3,
+                            decoration: BoxDecoration(
+                              color: appTheme.currentTheme == appTheme.dark
+                                  ? Colors.grey
+                                  : Colors.orange,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Cancel',
+                                style: kLabelStyle,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            if (titleController.text.isNotEmpty) {
+                              provider.addItem(
+                                NoteModel(
+                                    title: titleController.text,
+                                    mainText: mainTextController.text),
+                              );
+                              provider.getItem();
+                              titleController.clear();
+                              mainTextController.clear();
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Container(
+                            height: height / 18,
+                            width: width / 3,
+                            decoration: BoxDecoration(
+                              color: appTheme.currentTheme == appTheme.dark
+                                  ? Colors.grey
+                                  : Colors.orange,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Save',
+                                style: kLabelStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
