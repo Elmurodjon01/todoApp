@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/note_model.dart';
-import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/widgets/itemContainer.dart';
+import 'package:todoapp/widgets/testContainer.dart';
 import '../widgets/addButton.dart';
 import '../widgets/drawer.dart';
 
@@ -21,26 +22,17 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final provider = Provider.of<HiveDB>(context, listen: false);
-      provider.loadTodo();
+      final auth = Provider.of<Database>(context, listen: false);
+      auth.getItem();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // var loadInfo = HiveDB().loadUser();
-    final provider = Provider.of<HiveDB>(context);
+    final provider = Provider.of<Database>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: TextButton(
-          child: const Text(
-            'call',
-            style: TextStyle(color: Colors.white),
-          ),
-          onPressed: () => provider.loadTodo(),
-        ),
-      ),
+      appBar: AppBar(),
       drawer: const CustomerDrawer(),
       body: Stack(
         alignment: Alignment.bottomCenter,
@@ -48,18 +40,10 @@ class _MainScreenState extends State<MainScreen> {
           ListView.builder(
             itemCount: provider.notes.length,
             itemBuilder: (context, index) {
-              var data = provider.notes;
-              return ItemContainer(
-                label: data[index].title,
-                mainText: data[index].mainText,
-                onDeleted: () {
-                  provider.deleteTodo(index);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Todo is removed'),
-                    ),
-                  );
-                },
+              NoteModel data = provider.notes[index];
+              return ListTile(
+                title: Text(data.title),
+                subtitle: Text(data.mainText),
               );
             },
           ),

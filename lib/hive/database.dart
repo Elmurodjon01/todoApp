@@ -1,32 +1,35 @@
-// import 'package:hive/hive.dart';
-// import 'package:todoapp/model/note_model.dart';
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:todoapp/model/note_model.dart';
 
-// class HiveDB {
-//   var box = Hive.box('Notes');
+class Database extends ChangeNotifier {
+  List notes = <NoteModel>[];
+  addItem(NoteModel item) async {
+    var box = await Hive.box<NoteModel>('Notes');
 
-//   storeUser(NoteModel noteModel) {
-//     box.put('noteModel', noteModel.toJson());
-//   }
+    box.add(item);
+    getItem();
+    notifyListeners();
+  }
 
-//   NoteModel loadUser() {
-//     var noteModel = NoteModel.fromJson(box.get('noteModel'));
-//     return noteModel;
-//   }
+  getItem() async {
+    final box = await Hive.box<NoteModel>('Notes');
 
-//   deleteUser() {
-//     box.delete('noteModel');
-//   }
+    notes = box.values.toList();
 
-//   // storeAccount(Account account) {
-//   //   box.put('account', account.toJson());
-//   // }
+    notifyListeners();
+  }
 
-//   // Account loadAccount() {
-//   //   var account = Account.fromJson(box.get('account'));
-//   //   return account;
-//   // }
+  deleteItem(int index) {
+    final box = Hive.box<NoteModel>('Notes');
+    box.deleteAt(index);
+    getItem();
+    notifyListeners();
+  }
 
-//   // deleteAccount() {
-//   //   box.delete('account');
-//   // }
-// }
+  updateItem(int index, NoteModel item) {
+    final box = Hive.box<NoteModel>('Notes');
+    box.putAt(index, item);
+    notifyListeners();
+  }
+}

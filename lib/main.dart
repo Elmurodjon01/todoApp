@@ -8,9 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:todoapp/UI/addScreen.dart';
 import 'package:todoapp/UI/mainScreen.dart';
 import 'package:todoapp/UI/splashScreen.dart';
+import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/hive/themeManager.dart';
 import 'package:todoapp/model/note_model.dart';
-import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
 
 void main() async {
@@ -20,7 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Hive.registerAdapter(NoteModelAdapter());
 
-  await Hive.openBox('Notes');
+  await Hive.openBox<NoteModel>('Notes');
   // WidgetsFlutterBinding.ensureInitialized();
   // final document = await getApplicationDocumentsDirectory();
 
@@ -35,7 +35,8 @@ void main() async {
   // await Hive.openBox<NoteModel>('Notes');
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (BuildContext context) => NoteProvider()),
-    ChangeNotifierProvider(create: (BuildContext context) => HiveDB()),
+    ChangeNotifierProvider(create: (BuildContext context) => Database()),
+    // ChangeNotifierProvider(create: (BuildContext context) => HiveDB()),
     // ChangeNotifierProvider(create: (BuildContext context) => ThemeNotifier()),
   ], child: const MyApp()));
 }

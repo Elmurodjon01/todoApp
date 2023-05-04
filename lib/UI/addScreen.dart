@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/constants/constants.dart';
+import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/note_model.dart';
-import 'package:todoapp/provider/databaseProvider.dart';
 import 'package:todoapp/provider/noteProvider.dart';
 
 class AddScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class _AddScreenState extends State<AddScreen> {
   TextEditingController mainTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<HiveDB>(context);
+    final provider = Provider.of<Database>(context);
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -100,24 +100,15 @@ class _AddScreenState extends State<AddScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // final String textVal = taskTitleController.text;
-                      // final bool completed = completedStatus;
                       if (titleController.text.isNotEmpty) {
-                        // Provider.of<HiveDB>(context, listen: false).storeUser(todo);
-                        // var box = Hive.box('Notes');
-                        // box.put('title', title);
-                        // box.put('mainText', mainText);
-                        // Provider.of<NoteProvider>(context, listen: false).addTasks(todo);
-                        provider.notes.add(
+                        provider.addItem(
                           NoteModel(
-                            title: titleController.text.trim().toString(),
-                            mainText: mainTextController.text.trim().toString(),
-                          ),
+                              title: titleController.text,
+                              mainText: mainTextController.text),
                         );
+                        provider.getItem();
                         titleController.clear();
                         mainTextController.clear();
-                        provider.updateTodo();
-                        // provider.saveTodos();
                         Navigator.pop(context);
                       }
                     },
