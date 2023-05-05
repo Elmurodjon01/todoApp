@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 import 'package:todoapp/constants/constants.dart';
-import 'package:todoapp/provider/Apptheme_provider.dart';
+import 'package:todoapp/Theme/Apptheme_provider.dart';
 
 class ItemContainer extends StatelessWidget {
   String label;
@@ -24,7 +24,7 @@ class ItemContainer extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AppTheme>(context);
+    final provider = Provider.of<ThemeProvider>(context);
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -49,7 +49,8 @@ class ItemContainer extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: BlurryContainer(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withOpacity(0.10),
+            // color: Colors.white.withOpacity(0.15),
             blur: 8,
             elevation: 6,
             height: 240,
@@ -81,10 +82,12 @@ class ItemContainer extends StatelessWidget {
                     ),
                     child: Text(
                       mainText,
-                      style: TextStyle(
-                          color: provider.currentTheme == provider.dark
-                              ? Colors.white
-                              : const Color(0xFF484848),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          //TODO: comehere
+                          // color: provider.themeMode == provider.isDarkMode
+                          //     ? Colors.white
+                          //     : const Color(0xFF484848),
                           fontSize: 15,
                           fontWeight: FontWeight.w300),
                     ),

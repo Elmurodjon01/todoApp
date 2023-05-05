@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todoapp/constants/constants.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/note_model.dart';
-import 'package:todoapp/provider/Apptheme_provider.dart';
+import '../Theme/Apptheme_provider.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -18,7 +18,7 @@ class _AddScreenState extends State<AddScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<Database>(context);
-    final appTheme = Provider.of<AppTheme>(context);
+    final appTheme = Provider.of<ThemeProvider>(context);
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -107,9 +107,10 @@ class _AddScreenState extends State<AddScreen> {
                             height: height / 18,
                             width: width / 3,
                             decoration: BoxDecoration(
-                              color: appTheme.currentTheme == appTheme.dark
-                                  ? Colors.grey
-                                  : Colors.orange,
+                              //TODO:come here
+                              // color: appTheme.currentTheme == appTheme.
+                              //     ? Colors.grey
+                              color: Colors.orange,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Center(
@@ -138,9 +139,11 @@ class _AddScreenState extends State<AddScreen> {
                             height: height / 18,
                             width: width / 3,
                             decoration: BoxDecoration(
-                              color: appTheme.currentTheme == appTheme.dark
-                                  ? Colors.grey
-                                  : Colors.orange,
+                              color: Colors.orange,
+                              //TODO: come here
+                              // color: appTheme.themeMode == appTheme.isDarkMode
+                              //     ? Colors.grey
+                              //     : Colors.orange,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Center(

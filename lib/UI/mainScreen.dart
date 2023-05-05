@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/note_model.dart';
-import 'package:todoapp/provider/Apptheme_provider.dart';
+
 import 'package:todoapp/widgets/itemContainer.dart';
+import '../Theme/Apptheme_provider.dart';
 import '../widgets/addButton.dart';
 
 class MainScreen extends StatefulWidget {
@@ -39,8 +40,8 @@ class _MainScreenState extends State<MainScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () =>
-                Provider.of<AppTheme>(context, listen: false).toggleTheme(),
+            onPressed: () => Provider.of<ThemeProvider>(context, listen: false)
+                .changeCurrentTheme(),
             icon: const Icon(Icons.ac_unit_sharp),
           ),
         ],
