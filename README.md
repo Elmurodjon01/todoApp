@@ -21,3 +21,9 @@ Notes App. This app let user to save notes locally. Very simple but crucial app 
  * flutter_launcher_icons: ^0.11.0
  * shimmer_animation: ^2.1.0+1
  * rename: ^2.1.1
+
+![Screenshot 2023-11-16 at 5 23 40 PM](https://github.com/Elmurodjon01/todoApp/assets/96878908/e5881ad1-fda2-4bcf-be93-87e35b008b4c)
+![Screenshot 2023-11-16 at 5 23 01 PM](https://github.com/Elmurodjon01/todoApp/assets/96878908/007158f7-bd51-49de-b54e-9fd0fe1e9ae5)
+![Screenshot 2023-11-16 at 5 23 13 PM](https://github.com/Elmurodjon01/todoApp/assets/96878908/7c62adec-37e4-4aaa-bb59-9853a8336f5e)
+![Screenshot 2023-11-16 at 5 22 45 PM](https://github.com/Elmurodjon01/todoApp/assets/96878908/0fdfa840-700b-4e81-8502-2c9dab4216cc)
+![Screenshot 2023-11-16 at 5 22 31 PM](https://github.com/Elmurodjon01/todoApp/assets/96878908/46b1d08c-065e-4ed3-a73e-829850cbcbc6)
