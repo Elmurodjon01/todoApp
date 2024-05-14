@@ -1,15 +1,25 @@
-import 'dart:html';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:todoapp/data/repository/auth_repo.dart';
+import 'package:todoapp/model/user/user_model.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial()) {
-    on<AuthEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+class AuthBloc extends Bloc<AuthEvent, AuthBlocState> {
+  AuthRepo authRepo;
+  AuthBloc(this.authRepo) : super(AuthInitial()) {
+    on<SignInEvent>(_signIn);
+  }
+
+  void _signIn(SignInEvent event, Emitter<AuthBlocState> emit) async {
+    print('bloc is called');
+    emit(AuthInitial());
+    try {
+      final res = await authRepo.signUp(event.user);
+      emit(AuthSignedIn(userToken: res));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
   }
 }
