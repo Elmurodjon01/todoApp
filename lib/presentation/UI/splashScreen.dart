@@ -1,7 +1,7 @@
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 
 import 'package:flutter/material.dart';
-import 'package:todoapp/UI/mainScreen.dart';
+import 'package:todoapp/presentation/UI/mainScreen.dart';
 
 class SplashFuturePage extends StatefulWidget {
   SplashFuturePage({Key? key}) : super(key: key);

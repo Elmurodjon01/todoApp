@@ -1,0 +1,3 @@
+const url = 'https://oneylvbcepaesfnolxts.supabase.co';
+const anonKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXlsdmJjZXBhZXNmbm9seHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU2NzYzODEsImV4cCI6MjAzMTI1MjM4MX0.p9QBn6nbvPVTLrq1PoSX9agFqIAlo1rmI5fQ1o9Zymk';

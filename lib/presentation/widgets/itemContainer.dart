@@ -5,9 +5,9 @@ import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
+import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
 
 import 'package:todoapp/constants/constants.dart';
-import 'package:todoapp/Theme/Apptheme_provider.dart';
 
 class ItemContainer extends StatelessWidget {
   String label;

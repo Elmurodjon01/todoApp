@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:todoapp/model/note_model.dart';
+import 'package:todoapp/model/todoModel/note_model.dart';
 
 class Database extends ChangeNotifier {
   List notes = <NoteModel>[];
