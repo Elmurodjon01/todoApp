@@ -13,7 +13,7 @@ class AuthRepo {
       }
       return res["access_token"];
     } catch (e) {
-      throw "signup repo catched an error";
+      throw "signup repo catched an error: ${e.toString()}";
     }
   }
 }

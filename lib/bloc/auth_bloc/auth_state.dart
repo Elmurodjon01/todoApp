@@ -15,3 +15,8 @@ final class AuthFailure extends AuthBlocState {
   final String error;
   AuthFailure(this.error);
 }
+
+final class AuthLoading extends AuthBlocState {
+  final bool isLoading;
+  AuthLoading(this.isLoading);
+}

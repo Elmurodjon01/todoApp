@@ -14,9 +14,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthBlocState> {
 
   void _signIn(SignInEvent event, Emitter<AuthBlocState> emit) async {
     print('bloc is called');
-    emit(AuthInitial());
+    emit(AuthLoading(true));
+
     try {
+      // emit(AuthInitial());
       final res = await authRepo.signUp(event.user);
+      emit(AuthLoading(false));
       emit(AuthSignedIn(userToken: res));
     } catch (e) {
       emit(AuthFailure(e.toString()));

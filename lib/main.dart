@@ -11,6 +11,7 @@ import 'package:todoapp/data/provider/auth_provider.dart';
 import 'package:todoapp/data/repository/auth_repo.dart';
 import 'package:todoapp/model/user/user_model.dart';
 import 'package:todoapp/presentation/UI/addScreen.dart';
+import 'package:todoapp/presentation/UI/auth_screen/redirect_screen.dart';
 import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
 import 'package:todoapp/presentation/UI/mainScreen.dart';
 import 'package:todoapp/presentation/UI/splashScreen.dart';
@@ -93,26 +94,49 @@ void main() async {
   ], child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  NavigatorState get _navigator => _navigatorKey.currentState!;
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return RepositoryProvider(
       create: (context) => AuthRepo(AuthProvider()),
       child: BlocProvider(
-        create: (context) => AuthBloc(context.read<AuthRepo>())
-          ..add(SignInEvent(UserModel(
-              email: 'elmurodjon@inha.edu',
-              password: 'password',
-              username: 'username'))),
+        create: (context) => AuthBloc(context.read<AuthRepo>()),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: themeProvider.currentTheme,
-          initialRoute: '/',
+          // initialRoute: '/',
+          builder: (context, child) {
+            return BlocListener<AuthBloc, AuthBlocState>(
+              listener: (context, state) {
+                print('started listening');
+                switch (state) {
+                  case AuthSignedIn(userToken: " state.userToken"):
+                    _navigator.push(MaterialPageRoute(
+                        builder: (context) =>
+                            HomeScreen(userToken: state.userToken)));
+                    break;
+                  default:
+                    print('started listening 2x');
+                    _navigator.push(MaterialPageRoute(
+                        builder: (context) => LandingScreen()));
+                }
+              },
+              child: child,
+            );
+          },
           routes: {
-            '/': (context) => LandingScreen(),
+            '/': (context) => const LandingScreen(),
             '/home': (context) => const MainScreen(),
             '/addScreen': (context) => const AddScreen(),
           },

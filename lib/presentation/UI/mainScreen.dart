@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/todoModel/note_model.dart';
 import 'package:todoapp/presentation/widgets/itemContainer.dart';
 
 import '../Theme/Apptheme_provider.dart';
 import '../widgets/addButton.dart';
+
+class HomeScreen extends StatelessWidget {
+  String userToken;
+  HomeScreen({
+    Key? key,
+    required this.userToken,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Text(userToken),
+    );
+  }
+}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
