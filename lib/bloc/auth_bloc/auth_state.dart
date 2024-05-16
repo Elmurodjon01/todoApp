@@ -1,22 +1,23 @@
-part of 'auth_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-class AuthBlocState {}
-
-final class AuthInitial extends AuthBlocState {}
-
-final class AuthSignedIn extends AuthBlocState {
-  final String userToken;
-  AuthSignedIn({required this.userToken});
+ abstract class AuthBlocState extends Equatable {
+  @override
+  List<Object> get props => [];
 }
 
-final class AuthSignedOut extends AuthBlocState {}
+class AuthInitial extends AuthBlocState {}
 
-final class AuthFailure extends AuthBlocState {
-  final String error;
-  AuthFailure(this.error);
-}
+class AuthLoading extends AuthBlocState {}
 
-final class AuthLoading extends AuthBlocState {
-  final bool isLoading;
-  AuthLoading(this.isLoading);
+class AuthAuthenticated extends AuthBlocState {}
+
+class AuthUnauthenticated extends AuthBlocState {}
+
+class AuthError extends AuthBlocState {
+  final String message;
+
+  AuthError({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }
