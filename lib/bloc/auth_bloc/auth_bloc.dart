@@ -1,53 +1,44 @@
 import 'package:bloc/bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todoapp/data/repository/auth_repo.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthBlocState> {
-  AuthBloc() : super(AuthInitial()) {
-    on<AuthLoggedIn>(_login);
+  AuthRepo authrepo;
+  AuthBloc(this.authrepo) : super(AuthInitial()) {
+    on<AuthLoggedIn>(_signIn);
+    on<AuthLoggedOut>(_signOut);
+    on<AuthSignUp>(_signUp);
   }
 
-  void _login(AuthLoggedIn event, Emitter<AuthBlocState> emit) async {
+  void _signIn(AuthLoggedIn event, Emitter<AuthBlocState> emit) async {
+    emit(AuthLoading());
     try {
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: event.email,
-        password: event.password,
-      );
-      if (response.user!.email != null) {
-        emit(AuthAuthenticated());
-      }
+      await authrepo.signIn(event.user);
+      emit(AuthAuthenticated());
     } catch (e) {
-      throw e.toString();
+      emit(AuthError(message: e.toString()));
     }
   }
 
-  @override
-  // ignore: override_on_non_overriding_member
-  Stream<AuthBlocState> mapEventToState(AuthEvent event) async* {
-    if (event is AuthStarted) {
-      yield AuthLoading();
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session != null) {
-        yield AuthAuthenticated();
-      } else {
-        yield AuthUnauthenticated();
-      }
-    } else if (event is AuthLoggedIn) {
-      yield AuthLoading();
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: event.email,
-        password: event.password,
-      );
-      if (response.user!.email != null) {
-        yield AuthError(message: response.toString());
-      } else {
-        yield AuthAuthenticated();
-      }
-    } else if (event is AuthLoggedOut) {
-      yield AuthLoading();
-      await Supabase.instance.client.auth.signOut();
-      yield AuthUnauthenticated();
+  void _signOut(AuthLoggedOut event, Emitter<AuthBlocState> emit) async {
+    try {
+      await authrepo.signOut();
+      emit(AuthUnauthenticated());
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
+    }
+  }
+
+  void _signUp(AuthSignUp event, Emitter<AuthBlocState> emit) async {
+    emit(AuthLoading());
+
+    try {
+      await authrepo.signUp(event.user);
+      emit(AuthAuthenticated());
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
     }
   }
 }

@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
-import 'package:todoapp/bloc/auth_bloc/auth_state.dart';
 import 'package:todoapp/constants/apis.dart';
-import 'package:todoapp/constants/constants.dart';
 import 'package:todoapp/data/provider/auth_provider.dart';
 import 'package:todoapp/data/repository/auth_repo.dart';
-import 'package:todoapp/model/user/user_model.dart';
 import 'package:todoapp/presentation/UI/addScreen.dart';
-import 'package:todoapp/presentation/UI/auth_screen/login_screen.dart';
-import 'package:todoapp/presentation/UI/auth_screen/redirect_screen.dart';
+import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
 import 'package:todoapp/presentation/UI/mainScreen.dart';
-import 'package:todoapp/presentation/UI/splashScreen.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/todoModel/note_model.dart';
 import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
@@ -107,34 +101,29 @@ class _MyAppState extends State<MyApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
+  late String userId;
+
+  @override
+  void initState() {
+    userId = Supabase.instance.client.auth.currentSession?.user.id ?? '';
+    print('user is ->>>>>> $userId');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return RepositoryProvider(
       create: (context) => AuthRepo(AuthProvider()),
       child: BlocProvider(
-        create: (context) => AuthBloc(),
+        create: (context) => AuthBloc(context.read<AuthRepo>()),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: themeProvider.currentTheme,
-          // initialRoute: '/',
-
+          initialRoute: userId.isEmpty == true ? '/' : '/home',
           routes: {
-            '/': (context) => BlocBuilder<AuthBloc, AuthBlocState>(
-                  builder: (context, state) {
-                    if (state is AuthAuthenticated) {
-                      return MainScreen();
-                    } else if (state is AuthUnauthenticated) {
-                      return LoginScreen();
-                    } else if (state is AuthLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else {
-                      return LoginScreen();
-                    }
-                  },
-                ),
             '/': (context) => const LandingScreen(),
-            '/home': (context) => const MainScreen(),
+            '/home': (context) => const HomeScreen(),
             '/addScreen': (context) => const AddScreen(),
           },
         ),

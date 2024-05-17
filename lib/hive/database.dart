@@ -5,7 +5,7 @@ import 'package:todoapp/model/todoModel/note_model.dart';
 class Database extends ChangeNotifier {
   List notes = <NoteModel>[];
   addItem(NoteModel item) async {
-    var box = await Hive.box<NoteModel>('Notes');
+    var box = Hive.box<NoteModel>('Notes');
 
     box.add(item);
     getItem();
@@ -13,7 +13,7 @@ class Database extends ChangeNotifier {
   }
 
   getItem() async {
-    final box = await Hive.box<NoteModel>('Notes');
+    final box = Hive.box<NoteModel>('Notes');
 
     notes = box.values.toList();
 

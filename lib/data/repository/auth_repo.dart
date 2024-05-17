@@ -5,15 +5,15 @@ class AuthRepo {
   AuthProvider authProvider;
   AuthRepo(this.authProvider);
 
-  Future<String> signUp(UserModel user) async {
-    try {
-      final res = await authProvider.signUp(user);
-      if (res['access_token'] == null) {
-        throw "error in signUp repo, access_token is null";
-      }
-      return res["access_token"];
-    } catch (e) {
-      throw "signup repo catched an error: ${e.toString()}";
-    }
+  Future<void> signUp(UserModel user) async {
+    await authProvider.signUp(user);
+  }
+
+  Future<void> signIn(UserModel user) async {
+    await authProvider.signIn(user);
+  }
+
+  Future<void> signOut() async {
+    await authProvider.signOut();
   }
 }

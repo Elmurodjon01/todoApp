@@ -55,6 +55,9 @@ dependencies:
   flutter_svg: ^2.0.10+1
   gap: ^3.0.1
 
+  equatable: any
+  bloc: any
+  flutter_hooks: ^0.20.5
 flutter_icons:
   android: "launcher_icon"
   ios: true
@@ -98,6 +101,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/icons/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
