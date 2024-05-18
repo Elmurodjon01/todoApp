@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
+import 'package:todoapp/bloc/auth_bloc/auth_event.dart';
+import 'package:todoapp/main.dart';
 import 'package:todoapp/presentation/UI/create_todo/create_todo_screen.dart';
 import 'package:todoapp/presentation/UI/home_screen/custom_box.dart';
 import 'package:todoapp/presentation/UI/home_screen/todo_tile.dart';
+import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -90,7 +95,15 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   const Gap(10),
-                  const Text("Today's Tasks"),
+                  InkWell(
+                      onTap: () {
+                        context.read<AuthBloc>().add(AuthLoggedOut());
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LandingScreen()));
+                      },
+                      child: const Text("Today's Tasks")),
                   const Gap(10),
                   SizedBox(
                     width: double.infinity,

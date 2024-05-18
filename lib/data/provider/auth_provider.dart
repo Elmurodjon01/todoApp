@@ -61,12 +61,15 @@ class AuthProvider {
 
   Future<void> signOut() async {
     try {
-      await Dio().post(_signOutUrl, queryParameters: {
-        "apikey": anonKey,
-        "Content-Type": "application/json",
-        "Authorization":
-            "Bearer ${Supabase.instance.client.auth.currentSession!.accessToken}",
-      });
+      print('log out tried calling');
+      await Supabase.instance.client.auth.signOut();
+      // final res = await Dio().post(_signOutUrl, queryParameters: {
+      //   "apikey": anonKey,
+      //   "Content-Type": "application/json",
+      //   "Authorization":
+      //       "Bearer ${Supabase.instance.client.auth.currentSession!.accessToken}",
+      // });
+       print('log out response successfull');
     } catch (e) {
       throw e.toString();
     }
