@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
+import 'package:todoapp/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
 
 class CreateTodoScreen extends StatefulWidget {
-  CreateTodoScreen({super.key});
+  const CreateTodoScreen({super.key});
 
   @override
   State<CreateTodoScreen> createState() => _CreateTodoScreenState();
@@ -187,21 +190,41 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                 ),
                 const Gap(15),
                 Center(
-                  child: Container(
-                    height: 40,
-                    width: 193,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF9747FF),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                  child: InkWell(
+                    onTap: () {
+                      TodoModel todo = TodoModel(
+                        created_at: DateTime.now().toString(),
+                        title: "title",
+                        description: "description",
+                        start_time: TimeOfDay.now().toString(),
+                        end_time: TimeOfDay.now().toString(),
+                        is_completed: false,
+                        category: "work",
+                        priority: 'low',
+                        created_by:
+                            Supabase.instance.client.auth.currentUser!.aud,
+                        do_day: DateTime.now().toString(),
+                      );
+                      context.read<TodoBloc>().add(TodoInsert(todo));
+                      //       Navigator.of(context).push(MaterialPageRoute(
+                      //   builder: (context) => const HomeScreen()));
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 193,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF9747FF),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
                       ),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Create task',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                      child: const Center(
+                        child: Text(
+                          'Create task',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
@@ -239,7 +262,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
             border: InputBorder.none,
             hintText: hintText ?? '',
             hintStyle: const TextStyle(fontSize: 15),
-            suffixIcon: trailingIcon ?? null,
+            suffixIcon: trailingIcon,
           ),
         ),
       ),

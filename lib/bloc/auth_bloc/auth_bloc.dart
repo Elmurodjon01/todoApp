@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/data/repository/auth_repo.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';

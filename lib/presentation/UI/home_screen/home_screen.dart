@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_event.dart';
-import 'package:todoapp/main.dart';
+import 'package:todoapp/bloc/cubit/toggle_cubit.dart';
+import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
 import 'package:todoapp/presentation/UI/create_todo/create_todo_screen.dart';
 import 'package:todoapp/presentation/UI/home_screen/custom_box.dart';
 import 'package:todoapp/presentation/UI/home_screen/todo_tile.dart';
@@ -17,6 +17,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String newValue = '';
+    context.read<TodoBloc>().add(TodoLoad());
     final userId =
         Supabase.instance.client.auth.currentSession?.user.id ?? 'null';
     print('user id in home screen ->>>>>>$userId');
@@ -32,7 +34,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Gap(40),
-                  SizedBox(
+                  const SizedBox(
                     height: 45,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,23 +103,57 @@ class HomeScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LandingScreen()));
+                                builder: (context) => const LandingScreen()));
                       },
                       child: const Text("Today's Tasks")),
                   const Gap(10),
                   SizedBox(
                     width: double.infinity,
                     height: height / 2.05,
-                    child: ListView.builder(
-                      itemCount: 10,
-                      itemBuilder: (context, index) {
-                        return TodoTile(
-                          onEdit: () {},
-                          onChoose: (value) {},
-                          onDelete: () {},
-                          todo: 'Email to work',
-                          dateTime: '08:00 AM to 12:00 PM',
-                        );
+                    child: BlocBuilder<TodoBloc, TodoState>(
+                      builder: (context, state) {
+                        if (state is TodoLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          );
+                        } else if (state is TodoFailure) {
+                          return Center(
+                            child: Text(state.error),
+                          );
+                        } else if (state is TodoInitial) {
+                          return const Center(
+                            child: Text('Loading...'),
+                          );
+                        } else if (state is TodoLoaded) {
+                          return ListView.builder(
+                            itemCount: state.todos.length,
+                            itemBuilder: (context, index) {
+                              final todo = state.todos[index];
+                              return BlocBuilder<ToggleCubit, bool>(
+                                builder: (context, state) {
+                                  return TodoTile(
+                                    onEdit: () {},
+                                    onChoose: (value) {
+                                  //    newValue = value!;
+                                      context
+                                          .read<ToggleCubit>()
+                                          .triggerToggle(value!);
+                                      print('new status $state');
+                                    },
+                                    onDelete: () {},
+                                    todo: todo.title,
+                                    dateTime:
+                                        '${todo.start_time}AM to ${todo.end_time}PM',
+                                    priviousTodoStatus:
+                                        state,
+                                   // newTodoStatus: state,
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                        return const Text('Something went wrong');
                       },
                     ),
                   ),
@@ -129,8 +165,8 @@ class HomeScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: InkWell(
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => CreateTodoScreen())),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const CreateTodoScreen())),
               child: Container(
                 margin: const EdgeInsets.all(20),
                 height: 58,

@@ -9,7 +9,6 @@ import 'package:todoapp/model/user/user_model.dart';
 import 'package:todoapp/presentation/UI/auth_screen/custom_button.dart';
 import 'package:todoapp/presentation/UI/auth_screen/login_screen.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
-import 'package:todoapp/presentation/UI/mainScreen.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
 import 'package:todoapp/presentation/widgets/toast.dart';
 

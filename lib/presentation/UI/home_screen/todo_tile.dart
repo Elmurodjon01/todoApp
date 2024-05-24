@@ -1,6 +1,5 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:msh_checkbox/msh_checkbox.dart';
 
 class TodoTile extends StatelessWidget {
   const TodoTile({
@@ -10,13 +9,17 @@ class TodoTile extends StatelessWidget {
     required this.onDelete,
     required this.todo,
     required this.dateTime,
+    required this.priviousTodoStatus,
+    // required this.newTodoStatus,
   });
 
   final VoidCallback onEdit;
-  final Function(String?) onChoose;
+  final Function(bool?) onChoose;
   final VoidCallback onDelete;
   final String todo;
   final String dateTime;
+  final bool priviousTodoStatus;
+  //final String newTodoStatus;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,10 +39,13 @@ class TodoTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Radio(
-            value: '0',
-            groupValue: 'f',
+          MSHCheckbox(
+            colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+              checkedColor: Colors.blue,
+            ),
+            value: priviousTodoStatus,
             onChanged: onChoose,
+            style: MSHCheckboxStyle.fillScaleColor,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

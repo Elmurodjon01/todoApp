@@ -4,13 +4,16 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
+import 'package:todoapp/bloc/cubit/toggle_cubit.dart';
+import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
 import 'package:todoapp/constants/apis.dart';
 import 'package:todoapp/data/provider/auth_provider.dart';
+import 'package:todoapp/data/provider/todo_provider.dart';
 import 'package:todoapp/data/repository/auth_repo.dart';
+import 'package:todoapp/data/repository/todo_repo.dart';
 import 'package:todoapp/presentation/UI/addScreen.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
-import 'package:todoapp/presentation/UI/mainScreen.dart';
 import 'package:todoapp/hive/database.dart';
 import 'package:todoapp/model/todoModel/note_model.dart';
 import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
@@ -105,18 +108,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    userId = Supabase.instance.client.auth.currentSession?.user.id ?? '';
+    userId = Supabase.instance.client.auth.currentSession?.accessToken ?? '';
     print('user is ->>>>>> $userId');
+    final user = Supabase.instance.client.auth.currentUser?.aud ?? '';
+    print('user token 2 ->>>>>> $user');
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return RepositoryProvider(
-      create: (context) => AuthRepo(AuthProvider()),
-      child: BlocProvider(
-        create: (context) => AuthBloc(context.read<AuthRepo>()),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => AuthRepo(AuthProvider()),
+        ),
+        RepositoryProvider(
+          create: (context) => TodoRepository(TodoProvider()),
+        )
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthBloc(
+              context.read<AuthRepo>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => TodoBloc(
+              context.read<TodoRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => ToggleCubit(),
+          ),
+        ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: themeProvider.currentTheme,
