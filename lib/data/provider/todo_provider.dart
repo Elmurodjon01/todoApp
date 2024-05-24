@@ -31,13 +31,12 @@ class TodoProvider {
 
   Future<void> insertTodo(TodoModel todo) async {
     try {
-      print('started');
+      print('started usertoken $userToken');
       await http.post(
         Uri.parse(_insertUrl),
         headers: {
           "apikey": anonKey,
           "Authorization": "Bearer $userToken",
-          "Content-Type": "Content-Type",
           "Prefer": "return=minimal",
         },
         body: {
@@ -45,16 +44,15 @@ class TodoProvider {
           "description": todo.description,
           "start_time": todo.start_time,
           "end_time": todo.end_time,
-          "is_completed": todo.is_completed,
+          "is_completed": "false",
           "category": todo.category,
           "priority": todo.priority,
           "created_by": todo.created_by,
           "do_day": todo.do_day,
         },
       );
-      print('ended');
     } catch (e) {
-      throw "Something went wrong in todo_provider => $e";
+      throw "Error: $e";
     }
   }
 }

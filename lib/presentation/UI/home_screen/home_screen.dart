@@ -134,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                                   return TodoTile(
                                     onEdit: () {},
                                     onChoose: (value) {
-                                  //    newValue = value!;
+                                      //    newValue = value!;
                                       context
                                           .read<ToggleCubit>()
                                           .triggerToggle(value!);
@@ -144,9 +144,8 @@ class HomeScreen extends StatelessWidget {
                                     todo: todo.title,
                                     dateTime:
                                         '${todo.start_time}AM to ${todo.end_time}PM',
-                                    priviousTodoStatus:
-                                        state,
-                                   // newTodoStatus: state,
+                                    priviousTodoStatus: state,
+                                    // newTodoStatus: state,
                                   );
                                 },
                               );

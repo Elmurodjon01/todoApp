@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -7,32 +8,29 @@ import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
 import 'package:todoapp/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
+import 'package:todoapp/presentation/widgets/toast.dart';
 
-class CreateTodoScreen extends StatefulWidget {
+class CreateTodoScreen extends HookWidget {
   const CreateTodoScreen({super.key});
 
   @override
-  State<CreateTodoScreen> createState() => _CreateTodoScreenState();
-}
-
-class _CreateTodoScreenState extends State<CreateTodoScreen> {
-  final options = [
-    "Education",
-    "Work",
-    "Groceries",
-  ];
-  late bool value;
-  TextEditingController taskController = TextEditingController();
-  TextEditingController startTimeController = TextEditingController();
-  TextEditingController endTimeController = TextEditingController();
-
-  final priorities = [
-    "Low",
-    "Medium",
-    "High",
-  ];
-  @override
   Widget build(BuildContext context) {
+    final titleController = useTextEditingController();
+    final descriptionController = useTextEditingController();
+    final dateTimeController = useTextEditingController();
+    final startTimeController = useTextEditingController();
+    final endTimeController = useTextEditingController();
+
+    final options = [
+      "Education",
+      "Work",
+      "Groceries",
+    ];
+    final priorities = [
+      "Low",
+      "Medium",
+      "High",
+    ];
     return Scaffold(
       body: CustomBackground(
         child: SingleChildScrollView(
@@ -61,11 +59,13 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                 ),
                 const Gap(7),
                 CustomTextField(
-                  taskController,
+                  titleController,
                   null,
                   null,
                   double.infinity,
                   40,
+                  () {},
+                  false,
                 ),
                 const Gap(15),
                 const Text(
@@ -98,13 +98,24 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                 ),
                 const Gap(7),
                 CustomTextField(
-                  taskController,
+                  dateTimeController,
                   '09 November, Wednesday',
                   SvgPicture.asset(
                     'assets/icons/calendar.svg',
                   ),
                   double.infinity,
                   40,
+                  () async {
+                    print('tappped');
+                    final result = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2050),
+                    );
+                    dateTimeController.text = result!.timeZoneName.toString();
+                  },
+                  true,
                 ),
                 const Gap(15),
                 Row(
@@ -119,15 +130,16 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                         ),
                         const Gap(7),
                         CustomTextField(
-                          startTimeController,
-                          '09:00 AM',
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Color(0xFF9747FF),
-                          ),
-                          MediaQuery.of(context).size.width / 2.5,
-                          40,
-                        ),
+                            startTimeController,
+                            '09:00 AM',
+                            const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Color(0xFF9747FF),
+                            ),
+                            MediaQuery.of(context).size.width / 2.5,
+                            40,
+                            () {},
+                            false),
                       ],
                     ),
                     Column(
@@ -147,6 +159,8 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                           ),
                           MediaQuery.of(context).size.width / 2.5,
                           40,
+                          () {},
+                          false,
                         ),
                       ],
                     ),
@@ -187,27 +201,30 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                   null,
                   double.infinity,
                   120,
+                  () {},
+                  false,
                 ),
                 const Gap(15),
                 Center(
                   child: InkWell(
                     onTap: () {
                       TodoModel todo = TodoModel(
-                        created_at: DateTime.now().toString(),
-                        title: "title",
-                        description: "description",
-                        start_time: TimeOfDay.now().toString(),
-                        end_time: TimeOfDay.now().toString(),
-                        is_completed: false,
+                        created_at: dateTimeController.text.trim(),
+                        title: titleController.text.trim(),
+                        description: descriptionController.text.trim(),
+                        start_time: startTimeController.text.trim(),
+                        end_time: endTimeController.text.trim(),
                         category: "work",
                         priority: 'low',
                         created_by:
-                            Supabase.instance.client.auth.currentUser!.aud,
+                            Supabase.instance.client.auth.currentUser!.id,
                         do_day: DateTime.now().toString(),
+                        is_completed: false,
                       );
-                      context.read<TodoBloc>().add(TodoInsert(todo));
-                      //       Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (context) => const HomeScreen()));
+                      print('tried data ${todo}');
+                      // context.read<TodoBloc>().add(TodoInsert(todo));
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => const HomeScreen()));
                     },
                     child: Container(
                       height: 40,
@@ -239,8 +256,14 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
     );
   }
 
-  Container CustomTextField(TextEditingController controller, String? hintText,
-      Widget? trailingIcon, double width, double height) {
+  Widget CustomTextField(
+      TextEditingController controller,
+      String? hintText,
+      Widget? trailingIcon,
+      double width,
+      double height,
+      void Function()? onTap,
+      bool isReadOnly) {
     return Container(
       height: height,
       width: width,
@@ -256,6 +279,8 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
       ),
       child: Center(
         child: TextField(
+          readOnly: isReadOnly,
+          onTap: onTap,
           controller: controller,
           maxLines: 4,
           decoration: InputDecoration(
