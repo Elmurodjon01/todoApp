@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
+import 'package:todoapp/bloc/cubit/selector_cubit.dart';
 import 'package:todoapp/bloc/cubit/toggle_cubit.dart';
 import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
 import 'package:todoapp/constants/apis.dart';
@@ -142,6 +143,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
             create: (context) => ToggleCubit(),
           ),
+        
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
