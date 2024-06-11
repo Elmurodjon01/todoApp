@@ -30,9 +30,11 @@ class TodoProvider {
   }
 
   Future<void> insertTodo(TodoModel todo) async {
+    print('Flag 1 ');
     try {
+      print('Flag 2 ');
       print('started usertoken $userToken');
-      await http.post(
+      final res = await http.post(
         Uri.parse(_insertUrl),
         headers: {
           "apikey": anonKey,
@@ -45,12 +47,43 @@ class TodoProvider {
           "start_time": todo.start_time,
           "end_time": todo.end_time,
           "is_completed": "false",
-          "category": todo.category,
-          "priority": todo.priority,
+          "category": todo.category.toLowerCase(),
+          "priority": todo.priority.toLowerCase(),
           "created_by": todo.created_by,
           "do_day": todo.do_day,
         },
       );
+      print('todo add response ${res.body}');
+    } catch (e) {
+      throw "Error: $e";
+    }
+  }
+
+  Future<void> todoRemove(TodoModel todo) async {
+    print('Flag 1 ');
+    try {
+      print('Flag 2 ');
+      print('started usertoken $userToken');
+      final res = await http.post(
+        Uri.parse(_insertUrl),
+        headers: {
+          "apikey": anonKey,
+          "Authorization": "Bearer $userToken",
+          "Prefer": "return=minimal",
+        },
+        body: {
+          "title": todo.title,
+          "description": todo.description,
+          "start_time": todo.start_time,
+          "end_time": todo.end_time,
+          "is_completed": "false",
+          "category": todo.category.toLowerCase(),
+          "priority": todo.priority.toLowerCase(),
+          "created_by": todo.created_by,
+          "do_day": todo.do_day,
+        },
+      );
+      print('todo add response ${res.body}');
     } catch (e) {
       throw "Error: $e";
     }

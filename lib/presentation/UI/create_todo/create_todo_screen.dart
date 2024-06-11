@@ -3,33 +3,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/cubit/selector_cubit.dart';
 import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
+import 'package:todoapp/constants/constants.dart';
+import 'package:todoapp/model/todo_model/enums/todo_enum.dart';
 import 'package:todoapp/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
-import 'package:todoapp/presentation/widgets/toast.dart';
 
-class CreateTodoScreen extends HookWidget {
-  const CreateTodoScreen({super.key});
+class CreateTodoScreen extends StatefulWidget {
+  CreateTodoScreen({super.key});
 
   @override
+  State<CreateTodoScreen> createState() => _CreateTodoScreenState();
+}
+
+class _CreateTodoScreenState extends State<CreateTodoScreen> {
+  int? _priorityIndex = null;
+  int? _categoryIndex = null;
+  final titleController = TextEditingController();
+
+  final descriptionController = TextEditingController();
+  final dateTimeController = TextEditingController();
+  final startTimeController = TextEditingController();
+  final endTimeController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
-    int _selectedChipIndex = 0;
-    final titleController = useTextEditingController();
-
-    final descriptionController = useTextEditingController();
-    final dateTimeController = useTextEditingController();
-    final startTimeController = useTextEditingController();
-    final endTimeController = useTextEditingController();
-    final  blocA = SelectorCubit();
-    final  blocB = SelectorCubit();
-
     final options = [
-      "Education",
+      "DailyTask",
       "Work",
       "Groceries",
+      "Project",
     ];
     List<String> priorities = [
       "Low",
@@ -37,6 +43,13 @@ class CreateTodoScreen extends HookWidget {
       "High",
     ];
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Create a task',
+          style: kAppbarStyle,
+        ),
+      ),
       body: CustomBackground(
         child: SingleChildScrollView(
           child: Padding(
@@ -44,19 +57,6 @@ class CreateTodoScreen extends HookWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Gap(30),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen())),
-                      icon: const Icon(Icons.arrow_back_sharp),
-                    ),
-                    const Gap(70),
-                    const Text('Create a new task'),
-                  ],
-                ),
                 const Gap(25),
                 const Text(
                   'Task Name',
@@ -78,34 +78,27 @@ class CreateTodoScreen extends HookWidget {
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const Gap(7),
-                BlocProvider(
-                  create: (context) => blocA,
-                  child: BlocBuilder<SelectorCubit, int?>(
-                    builder: (context, state) {
-                      return Wrap(
-                        children: List.generate(
-                          options.length,
-                          (int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 5, right: 5),
-                              child: ChoiceChip(
-                                labelStyle: const TextStyle(fontSize: 12),
-                                label: Text(
-                                  options[index],
-                                ),
-                                selected: state == index,
-                                onSelected: (value) {
-                                  context
-                                      .read<SelectorCubit>()
-                                      .changeChoice(value, index);
-                                },
-                              ),
-                            );
+                Wrap(
+                  children: List.generate(
+                    options.length,
+                    (int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        child: ChoiceChip(
+                          labelStyle: const TextStyle(fontSize: 12),
+                          label: Text(
+                            options[index],
+                          ),
+                          selected: _categoryIndex == index,
+                          onSelected: (value) {
+                            setState(() {
+                              _categoryIndex = value ? index : null;
+                            });
                           },
-                        ).toList(),
+                        ),
                       );
                     },
-                  ),
+                  ).toList(),
                 ),
                 const Gap(15),
                 const Text(
@@ -128,7 +121,9 @@ class CreateTodoScreen extends HookWidget {
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2050),
                     );
-                    dateTimeController.text = result!.toString();
+                    if (result != null) {
+                      dateTimeController.text = result.toString();
+                    }
                   },
                   true,
                 ),
@@ -159,10 +154,12 @@ class CreateTodoScreen extends HookWidget {
                               initialTime:
                                   const TimeOfDay(hour: 00, minute: 00),
                             );
-                            startTimeController.text =
-                                result?.format(context) ??
-                                    const TimeOfDay(hour: 00, minute: 00)
-                                        .format(context);
+                            if (result != null) {
+                              startTimeController.text =
+                                  result?.format(context) ??
+                                      const TimeOfDay(hour: 00, minute: 00)
+                                          .format(context);
+                            }
                           },
                           true,
                         ),
@@ -191,8 +188,12 @@ class CreateTodoScreen extends HookWidget {
                               initialTime:
                                   const TimeOfDay(hour: 00, minute: 00),
                             );
-                            endTimeController.text = result?.format(context) ??
-                                TimeOfDay(hour: 00, minute: 00).format(context);
+                            if (result != null) {
+                              endTimeController.text =
+                                  result?.format(context) ??
+                                      const TimeOfDay(hour: 00, minute: 00)
+                                          .format(context);
+                            }
                           },
                           true,
                         ),
@@ -206,34 +207,27 @@ class CreateTodoScreen extends HookWidget {
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const Gap(7),
-                BlocProvider(
-                  create: (context) => blocB,
-                  child: BlocBuilder<SelectorCubit, int?>(
-                    builder: (context, state) {
-                      return Wrap(
-                        children: List.generate(
-                          priorities.length,
-                          (int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 5, right: 5),
-                              child: ChoiceChip(
-                                labelStyle: const TextStyle(fontSize: 12),
-                                label: Text(
-                                  priorities[index],
-                                ),
-                                selected: state == index,
-                                onSelected: (selected) {
-                                  context
-                                      .read<SelectorCubit>()
-                                      .changeChoice(selected, index);
-                                },
-                              ),
-                            );
+                Wrap(
+                  children: List.generate(
+                    priorities.length,
+                    (int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        child: ChoiceChip(
+                          labelStyle: const TextStyle(fontSize: 12),
+                          label: Text(
+                            priorities[index],
+                          ),
+                          selected: _priorityIndex == index,
+                          onSelected: (selected) {
+                            setState(() {
+                              _priorityIndex = selected ? index : null;
+                            });
                           },
-                        ).toList(),
+                        ),
                       );
                     },
-                  ),
+                  ).toList(),
                 ),
                 const Gap(15),
                 const Text(
@@ -253,22 +247,35 @@ class CreateTodoScreen extends HookWidget {
                 Center(
                   child: InkWell(
                     onTap: () {
-                      TodoModel todo = TodoModel(
-                        created_at: DateTime.now().toString(),
-                        title: titleController.text.trim(),
-                        description: descriptionController.text.trim(),
-                        start_time: startTimeController.text.trim(),
-                        end_time: endTimeController.text.trim(),
-                        category:'work',
-                        priority: 'low',
-                        created_by:
-                            Supabase.instance.client.auth.currentUser!.id,
-                        do_day: dateTimeController.text.trim(),
-                        is_completed: false,
-                      );
-                      context.read<TodoBloc>().add(TodoInsert(todo));
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                      if (_categoryIndex == null ||
+                          _priorityIndex == null ||
+                          titleController.text.isEmpty ||
+                          dateTimeController.text.isEmpty ||
+                          startTimeController.text.isEmpty ||
+                          endTimeController.text.isEmpty ||
+                          descriptionController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text(
+                                'One of the fields are empty, Please fill them all!')));
+                      } else {
+                        TodoModel todo = TodoModel(
+                          created_at: DateTime.now().toString(),
+                          title: titleController.text.trim(),
+                          description: descriptionController.text.trim(),
+                          start_time: startTimeController.text.trim(),
+                          end_time: endTimeController.text.trim(),
+                          category: options[_categoryIndex!],
+                          priority: priorities[_priorityIndex!],
+                          created_by:
+                              Supabase.instance.client.auth.currentUser!.id,
+                          do_day: dateTimeController.text.trim(),
+                          is_completed: false,
+                        );
+                        context.read<TodoBloc>().add(TodoInsert(todo));
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const HomeScreen()));
+                      }
+
                       // print('category tried ${BlocProvider.of<SelectorCubit>(context).state}');
                       // print('priority tried ${BlocProvider.of<SelectorCubit>(context).state}');
                     },

@@ -17,4 +17,6 @@ final class TodoLoading extends TodoState {}
 
 final class TodoInitial extends TodoState {}
 
+final class TodoEmpty extends TodoState {
 
+}

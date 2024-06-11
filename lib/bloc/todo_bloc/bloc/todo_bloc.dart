@@ -16,9 +16,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     try {
       final res = await todoRepository.fetchTodos();
       if (res.isEmpty) {
-        emit(TodoFailure('todo is empty => $res'));
+        emit(TodoEmpty());
+      } else {
+        emit(TodoLoaded(res));
       }
-      emit(TodoLoaded(res));
     } catch (e) {
       emit(TodoFailure('todo bloc error => $e'));
     }

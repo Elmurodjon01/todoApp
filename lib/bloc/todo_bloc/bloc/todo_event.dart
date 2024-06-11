@@ -9,3 +9,5 @@ final class TodoInsert extends TodoEvent {
   final TodoModel todo;
  TodoInsert(this.todo);
 }
+
+final class TodoRemove extends TodoEvent {}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
 import 'package:todoapp/bloc/auth_bloc/auth_event.dart';
@@ -134,11 +135,9 @@ class HomeScreen extends StatelessWidget {
                                   return TodoTile(
                                     onEdit: () {},
                                     onChoose: (value) {
-                                      //    newValue = value!;
                                       context
                                           .read<ToggleCubit>()
                                           .triggerToggle(value!);
-                                      print('new status $state');
                                     },
                                     onDelete: () {},
                                     todo: todo.title,
@@ -150,6 +149,20 @@ class HomeScreen extends StatelessWidget {
                                 },
                               );
                             },
+                          );
+                        } else if (state is TodoEmpty) {
+                          return Center(
+                            child: Column(
+                              children: [
+                                const Gap(70),
+                                Image.asset(
+                                  'assets/icons/no_todos.png',
+                                  height: 222,
+                                  width: 222,
+                                ),
+                                const Text('There is no todos for today'),
+                              ],
+                            ),
                           );
                         }
                         return const Text('Something went wrong');
@@ -164,8 +177,8 @@ class HomeScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: InkWell(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CreateTodoScreen())),
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => CreateTodoScreen())),
               child: Container(
                 margin: const EdgeInsets.all(20),
                 height: 58,
