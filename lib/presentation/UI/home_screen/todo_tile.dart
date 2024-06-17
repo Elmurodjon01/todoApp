@@ -53,17 +53,23 @@ class TodoTile extends StatelessWidget {
             children: [
               Text(
                 todo,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   overflow: TextOverflow.ellipsis,
+                  decoration: priviousTodoStatus
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
                 ),
                 maxLines: 1,
               ),
               Text(
                 dateTime,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey,
+                  decoration: priviousTodoStatus
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
                 ),
               ),
             ],

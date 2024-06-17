@@ -157,19 +157,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:todoapp/google_places/location_controller.dart';
-
-// void main() {
-//   runApp(MaterialApp(
-//     title: 'Flutter Demo',
-//     theme: ThemeData(
-//       primarySwatch: Colors.blue,
-//       visualDensity: VisualDensity.adaptivePlatformDensity,
-//     ),
-//     home: GoogleAddressSearchPage(),
-//   ));
-// }

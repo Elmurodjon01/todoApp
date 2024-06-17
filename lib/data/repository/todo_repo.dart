@@ -14,4 +14,12 @@ class TodoRepository {
   Future<void> insertTodo(TodoModel todo) async {
     await todoProvider.insertTodo(todo);
   }
+
+  Future<void> remoteTodo(TodoModel todo) async {
+    await todoProvider.todoRemove(todo);
+  }
+
+  Future<void> markCompleted(TodoModel todo) async {
+    await todoProvider.markCompleted(todo);
+  }
 }

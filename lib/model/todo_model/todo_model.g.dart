@@ -18,6 +18,7 @@ _$TodoModelImpl _$$TodoModelImplFromJson(Map<String, dynamic> json) =>
       priority: json['priority'] as String,
       created_by: json['created_by'] as String,
       do_day: json['do_day'] as String,
+      id: (json['id'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$TodoModelImplToJson(_$TodoModelImpl instance) =>
@@ -32,4 +33,5 @@ Map<String, dynamic> _$$TodoModelImplToJson(_$TodoModelImpl instance) =>
       'priority': instance.priority,
       'created_by': instance.created_by,
       'do_day': instance.do_day,
+      'id': instance.id,
     };

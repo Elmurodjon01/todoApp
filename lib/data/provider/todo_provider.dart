@@ -9,6 +9,8 @@ class TodoProvider {
   final _readTodoUrl =
       "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?select=*";
   final _insertUrl = "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos";
+  String _updateUrl(int id) =>
+      'https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?id=eq.${id}';
   final userToken = Supabase.instance.client.auth.currentSession!.accessToken;
   Future<List<TodoModel>> fetchTodos() async {
     try {
@@ -60,32 +62,32 @@ class TodoProvider {
   }
 
   Future<void> todoRemove(TodoModel todo) async {
-    print('Flag 1 ');
+    final _removeTodoUrl =
+        "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?id=eq.${todo.id}";
     try {
-      print('Flag 2 ');
-      print('started usertoken $userToken');
-      final res = await http.post(
-        Uri.parse(_insertUrl),
+      await http.delete(Uri.parse(_removeTodoUrl), headers: {
+        "apikey": anonKey,
+        "Authorization": "Bearer $userToken",
+      });
+    } catch (e) {
+      throw "Error: $e";
+    }
+  }
+
+  Future<void> markCompleted(TodoModel todo) async {
+    try {
+      await http.patch(
+        Uri.parse(_updateUrl(todo.id)),
         headers: {
           "apikey": anonKey,
           "Authorization": "Bearer $userToken",
+          "Content-Type": "application/json",
           "Prefer": "return=minimal",
         },
-        body: {
-          "title": todo.title,
-          "description": todo.description,
-          "start_time": todo.start_time,
-          "end_time": todo.end_time,
-          "is_completed": "false",
-          "category": todo.category.toLowerCase(),
-          "priority": todo.priority.toLowerCase(),
-          "created_by": todo.created_by,
-          "do_day": todo.do_day,
-        },
+        body: jsonEncode({"is_completed": todo.is_completed}),
       );
-      print('todo add response ${res.body}');
     } catch (e) {
-      throw "Error: $e";
+      throw e.toString();
     }
   }
 }

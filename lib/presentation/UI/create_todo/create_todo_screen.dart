@@ -243,7 +243,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                   () {},
                   false,
                 ),
-                const Gap(15),
+                const Gap(8),
                 Center(
                   child: InkWell(
                     onTap: () {
@@ -264,13 +264,14 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                           description: descriptionController.text.trim(),
                           start_time: startTimeController.text.trim(),
                           end_time: endTimeController.text.trim(),
-                          category: options[_categoryIndex!],
-                          priority: priorities[_priorityIndex!],
+                          category: options[_categoryIndex!].toLowerCase(),
+                          priority: priorities[_priorityIndex!].toLowerCase(),
                           created_by:
                               Supabase.instance.client.auth.currentUser!.id,
                           do_day: dateTimeController.text.trim(),
                           is_completed: false,
                         );
+                        print('uploaded to db $todo');
                         context.read<TodoBloc>().add(TodoInsert(todo));
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) => const HomeScreen()));
@@ -282,6 +283,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                     child: Container(
                       height: 40,
                       width: 193,
+                      margin: const EdgeInsets.only(bottom: 20),
                       decoration: const BoxDecoration(
                         color: Color(0xFF9747FF),
                         borderRadius: BorderRadius.all(

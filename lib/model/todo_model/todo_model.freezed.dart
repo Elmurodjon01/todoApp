@@ -30,6 +30,7 @@ mixin _$TodoModel {
   String get priority => throw _privateConstructorUsedError;
   String get created_by => throw _privateConstructorUsedError;
   String get do_day => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -52,7 +53,8 @@ abstract class $TodoModelCopyWith<$Res> {
       String category,
       String priority,
       String created_by,
-      String do_day});
+      String do_day,
+      int id});
 }
 
 /// @nodoc
@@ -78,6 +80,7 @@ class _$TodoModelCopyWithImpl<$Res, $Val extends TodoModel>
     Object? priority = null,
     Object? created_by = null,
     Object? do_day = null,
+    Object? id = null,
   }) {
     return _then(_value.copyWith(
       created_at: null == created_at
@@ -120,6 +123,10 @@ class _$TodoModelCopyWithImpl<$Res, $Val extends TodoModel>
           ? _value.do_day
           : do_day // ignore: cast_nullable_to_non_nullable
               as String,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -142,7 +149,8 @@ abstract class _$$TodoModelImplCopyWith<$Res>
       String category,
       String priority,
       String created_by,
-      String do_day});
+      String do_day,
+      int id});
 }
 
 /// @nodoc
@@ -166,6 +174,7 @@ class __$$TodoModelImplCopyWithImpl<$Res>
     Object? priority = null,
     Object? created_by = null,
     Object? do_day = null,
+    Object? id = null,
   }) {
     return _then(_$TodoModelImpl(
       created_at: null == created_at
@@ -208,6 +217,10 @@ class __$$TodoModelImplCopyWithImpl<$Res>
           ? _value.do_day
           : do_day // ignore: cast_nullable_to_non_nullable
               as String,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -225,7 +238,8 @@ class _$TodoModelImpl implements _TodoModel {
       required this.category,
       required this.priority,
       required this.created_by,
-      required this.do_day});
+      required this.do_day,
+      this.id = 0});
 
   factory _$TodoModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TodoModelImplFromJson(json);
@@ -250,10 +264,13 @@ class _$TodoModelImpl implements _TodoModel {
   final String created_by;
   @override
   final String do_day;
+  @override
+  @JsonKey()
+  final int id;
 
   @override
   String toString() {
-    return 'TodoModel(created_at: $created_at, title: $title, description: $description, start_time: $start_time, end_time: $end_time, is_completed: $is_completed, category: $category, priority: $priority, created_by: $created_by, do_day: $do_day)';
+    return 'TodoModel(created_at: $created_at, title: $title, description: $description, start_time: $start_time, end_time: $end_time, is_completed: $is_completed, category: $category, priority: $priority, created_by: $created_by, do_day: $do_day, id: $id)';
   }
 
   @override
@@ -278,7 +295,8 @@ class _$TodoModelImpl implements _TodoModel {
                 other.priority == priority) &&
             (identical(other.created_by, created_by) ||
                 other.created_by == created_by) &&
-            (identical(other.do_day, do_day) || other.do_day == do_day));
+            (identical(other.do_day, do_day) || other.do_day == do_day) &&
+            (identical(other.id, id) || other.id == id));
   }
 
   @JsonKey(ignore: true)
@@ -294,7 +312,8 @@ class _$TodoModelImpl implements _TodoModel {
       category,
       priority,
       created_by,
-      do_day);
+      do_day,
+      id);
 
   @JsonKey(ignore: true)
   @override
@@ -321,7 +340,8 @@ abstract class _TodoModel implements TodoModel {
       required final String category,
       required final String priority,
       required final String created_by,
-      required final String do_day}) = _$TodoModelImpl;
+      required final String do_day,
+      final int id}) = _$TodoModelImpl;
 
   factory _TodoModel.fromJson(Map<String, dynamic> json) =
       _$TodoModelImpl.fromJson;
@@ -346,6 +366,8 @@ abstract class _TodoModel implements TodoModel {
   String get created_by;
   @override
   String get do_day;
+  @override
+  int get id;
   @override
   @JsonKey(ignore: true)
   _$$TodoModelImplCopyWith<_$TodoModelImpl> get copyWith =>
