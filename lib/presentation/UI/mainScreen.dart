@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+// import 'package:remote/remote.dart';
 // import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
 // import 'package:todoapp/bloc/auth_bloc/auth_event.dart';
 
@@ -49,7 +49,7 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     final provider = Provider.of<Database>(context);
+//     final remote = Provider.of<Database>(context);
 
 //     return Scaffold(
 //       appBar: AppBar(
@@ -77,13 +77,13 @@
 //         alignment: Alignment.bottomCenter,
 //         children: [
 //           ListView.builder(
-//             itemCount: provider.notes.length,
+//             itemCount: remote.notes.length,
 //             itemBuilder: (context, index) {
-//               NoteModel data = provider.notes[index];
+//               NoteModel data = remote.notes[index];
 //               return ItemContainer(
 //                 label: data.title,
 //                 mainText: data.mainText,
-//                 onDeleted: () => provider.deleteItem(index),
+//                 onDeleted: () => remote.deleteItem(index),
 //                 onEdit: () {
 //                   showDialog(
 //                     context: context,
@@ -119,14 +119,14 @@
 //                           ),
 //                           ElevatedButton(
 //                             onPressed: () {
-//                               provider.updateItem(
+//                               remote.updateItem(
 //                                 index,
 //                                 NoteModel(
 //                                     title: editTitleController.text,
 //                                     mainText: editMainController.text),
 //                               );
 
-//                               provider.getItem();
+//                               remote.getItem();
 //                               Navigator.of(context).pop();
 //                             },
 //                             child: const Text('Save'),

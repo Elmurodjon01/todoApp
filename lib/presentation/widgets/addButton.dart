@@ -11,7 +11,7 @@ Container AddButton(BuildContext context) {
     decoration: BoxDecoration(
       color: Colors.orange,
       //TODO: come here
-      // provider.themeMode == provider.isDarkMode ? Colors.grey : Colors.orange,
+      // remote.themeMode == remote.isDarkMode ? Colors.grey : Colors.orange,
       borderRadius: BorderRadius.circular(20),
     ),
     child: IconButton(

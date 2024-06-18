@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+// import 'package:remote/remote.dart';
 // import 'package:todoapp/hive/themeManager.dart';
-// import 'package:todoapp/provider/noteProvider.dart';
+// import 'package:todoapp/remote/noteProvider.dart';
 
 // class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
 //   const CustomAppBar({

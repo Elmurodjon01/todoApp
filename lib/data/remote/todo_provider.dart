@@ -1,20 +1,19 @@
 import 'dart:convert';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:todoapp/constants/apis.dart';
-import 'package:todoapp/model/todo_model/todo_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:todoapp/data/model/todo_model/todo_model.dart';
+import 'package:todoapp/res/constants/apis.dart';
 
 class TodoProvider {
   final _readTodoUrl =
-      "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?select=*";
+      "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?created_by=eq.${Supabase.instance.client.auth.currentUser!.id}";
   final _insertUrl = "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos";
   String _updateUrl(int id) =>
-      'https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?id=eq.${id}';
+      'https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?id=eq.$id';
   final userToken = Supabase.instance.client.auth.currentSession!.accessToken;
   Future<List<TodoModel>> fetchTodos() async {
     try {
-      print('request made');
       final res = await http.get(Uri.parse(_readTodoUrl), headers: {
         "apiKey": anonKey,
         "Authorization": "Bearer $userToken",
@@ -24,18 +23,16 @@ class TodoProvider {
       }
 
       final data = jsonDecode(res.body) as List;
+
       final values = data.map((e) => TodoModel.fromJson(e)).toList();
       return values;
     } catch (e) {
-      throw "todo provider catched an error: ${e.toString()}";
+      throw "todo remote catched an error: ${e.toString()}";
     }
   }
 
   Future<void> insertTodo(TodoModel todo) async {
-    print('Flag 1 ');
     try {
-      print('Flag 2 ');
-      print('started usertoken $userToken');
       final res = await http.post(
         Uri.parse(_insertUrl),
         headers: {
@@ -53,19 +50,19 @@ class TodoProvider {
           "priority": todo.priority.toLowerCase(),
           "created_by": todo.created_by,
           "do_day": todo.do_day,
+          "created_at": todo.created_at,
         },
       );
-      print('todo add response ${res.body}');
     } catch (e) {
       throw "Error: $e";
     }
   }
 
   Future<void> todoRemove(TodoModel todo) async {
-    final _removeTodoUrl =
+    final removeTodoUrl =
         "https://oneylvbcepaesfnolxts.supabase.co/rest/v1/todos?id=eq.${todo.id}";
     try {
-      await http.delete(Uri.parse(_removeTodoUrl), headers: {
+      await http.delete(Uri.parse(removeTodoUrl), headers: {
         "apikey": anonKey,
         "Authorization": "Bearer $userToken",
       });

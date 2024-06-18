@@ -1,310 +1,341 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:todoapp/bloc/cubit/selector_cubit.dart';
-import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
-import 'package:todoapp/constants/constants.dart';
-import 'package:todoapp/model/todo_model/enums/todo_enum.dart';
-import 'package:todoapp/model/todo_model/todo_model.dart';
-import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
+import 'package:todoapp/bloc/todo_crud/bloc/todo_bloc.dart';
+import 'package:todoapp/data/model/todo_model/todo_model.dart';
+import 'package:todoapp/presentation/helper/index_helper.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
+import 'package:todoapp/res/constants/constants.dart';
+import 'package:todoapp/routes/go_router.dart';
 
 class CreateTodoScreen extends StatefulWidget {
-  CreateTodoScreen({super.key});
-
+  const CreateTodoScreen({Key? key, this.todo}) : super(key: key);
+  final TodoModel? todo;
   @override
   State<CreateTodoScreen> createState() => _CreateTodoScreenState();
 }
 
 class _CreateTodoScreenState extends State<CreateTodoScreen> {
-  int? _priorityIndex = null;
-  int? _categoryIndex = null;
+  int? _priorityIndex;
+  int? _categoryIndex;
   final titleController = TextEditingController();
-
   final descriptionController = TextEditingController();
   final dateTimeController = TextEditingController();
   final startTimeController = TextEditingController();
   final endTimeController = TextEditingController();
+  final options = [
+    "Dailytask",
+    "Work",
+    "Groceries",
+    "Project",
+  ];
+  List<String> priorities = [
+    "Low",
+    "Medium",
+    "High",
+  ];
+
+  @override
+  void initState() {
+    if (widget.todo != null) {
+      final DateFormat dateFormatter = DateFormat('yyyy-MM-dd hh:mm');
+      titleController.text = widget.todo!.title;
+      descriptionController.text = widget.todo!.description;
+
+      dateTimeController.text =
+          dateFormatter.format(DateTime.parse(widget.todo!.created_at));
+      startTimeController.text = widget.todo!.start_time;
+      endTimeController.text = widget.todo!.end_time;
+      _priorityIndex =
+          checkIndex(widget.todo?.priority, i: 1, null, priorities);
+      _categoryIndex = checkIndex(widget.todo?.category, options, null, i: 0);
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final options = [
-      "DailyTask",
-      "Work",
-      "Groceries",
-      "Project",
-    ];
-    List<String> priorities = [
-      "Low",
-      "Medium",
-      "High",
-    ];
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Create a task',
-          style: kAppbarStyle,
-        ),
-      ),
       body: CustomBackground(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Gap(25),
-                const Text(
-                  'Task Name',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const Gap(7),
-                CustomTextField(
-                  titleController,
-                  'Enter title',
-                  null,
-                  double.infinity,
-                  45,
-                  () {},
-                  false,
-                ),
-                const Gap(15),
-                const Text(
-                  'Category',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const Gap(7),
-                Wrap(
-                  children: List.generate(
-                    options.length,
-                    (int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 5, right: 5),
-                        child: ChoiceChip(
-                          labelStyle: const TextStyle(fontSize: 12),
-                          label: Text(
-                            options[index],
-                          ),
-                          selected: _categoryIndex == index,
-                          onSelected: (value) {
-                            setState(() {
-                              _categoryIndex = value ? index : null;
-                            });
-                          },
-                        ),
-                      );
-                    },
-                  ).toList(),
-                ),
-                const Gap(15),
-                const Text(
-                  'Date & Time',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const Gap(7),
-                CustomTextField(
-                  dateTimeController,
-                  '09 November, Wednesday',
-                  SvgPicture.asset(
-                    'assets/icons/calendar.svg',
+        child: Column(
+          children: [
+            const Gap(50),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => context.pop(),
+                    icon: const Icon(Icons.arrow_back_ios),
                   ),
-                  double.infinity,
-                  45,
-                  () async {
-                    final result = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2050),
-                    );
-                    if (result != null) {
-                      dateTimeController.text = result.toString();
-                    }
-                  },
-                  true,
-                ),
-                const Gap(15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ],
+              ),
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const Gap(20),
+                    const Text(
+                      'Task Name',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    const Gap(7),
+                    CustomTextField(
+                      titleController,
+                      'Enter title',
+                      null,
+                      double.infinity,
+                      45,
+                      () {},
+                      false,
+                    ),
+                    const Gap(15),
+                    const Text(
+                      'Category',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    const Gap(7),
+                    Wrap(
+                      children: List.generate(
+                        options.length,
+                        (int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            child: ChoiceChip(
+                              labelStyle: const TextStyle(fontSize: 12),
+                              label: Text(
+                                options[index],
+                              ),
+                              selected: _categoryIndex == index,
+                              onSelected: (value) {
+                                setState(() {
+                                  _categoryIndex = value ? index : null;
+                                });
+                              },
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                    const Gap(15),
+                    const Text(
+                      'Date & Time',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    const Gap(7),
+                    CustomTextField(
+                      dateTimeController,
+                      '09 November, Wednesday',
+                      SvgPicture.asset(
+                        'assets/icons/calendar.svg',
+                      ),
+                      double.infinity,
+                      45,
+                      () async {
+                        final result = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2050),
+                        );
+                        if (result != null) {
+                          dateTimeController.text = result.toString();
+                        }
+                      },
+                      true,
+                    ),
+                    const Gap(15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Start time',
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Start time',
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            const Gap(7),
+                            CustomTextField(
+                              startTimeController,
+                              '12:00 AM',
+                              const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Color(0xFF9747FF),
+                              ),
+                              MediaQuery.of(context).size.width / 2.5,
+                              45,
+                              () async {
+                                final result = await showTimePicker(
+                                  context: context,
+                                  initialTime:
+                                      const TimeOfDay(hour: 00, minute: 00),
+                                );
+                                if (result != null) {
+                                  startTimeController.text =
+                                      result.format(context) ??
+                                          const TimeOfDay(hour: 00, minute: 00)
+                                              .format(context);
+                                }
+                              },
+                              true,
+                            ),
+                          ],
                         ),
-                        const Gap(7),
-                        CustomTextField(
-                          startTimeController,
-                          '12:00 AM',
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Color(0xFF9747FF),
-                          ),
-                          MediaQuery.of(context).size.width / 2.5,
-                          45,
-                          () async {
-                            final result = await showTimePicker(
-                              context: context,
-                              initialTime:
-                                  const TimeOfDay(hour: 00, minute: 00),
-                            );
-                            if (result != null) {
-                              startTimeController.text =
-                                  result?.format(context) ??
-                                      const TimeOfDay(hour: 00, minute: 00)
-                                          .format(context);
-                            }
-                          },
-                          true,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'End time',
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            const Gap(7),
+                            CustomTextField(
+                              endTimeController,
+                              '12:00 AM',
+                              const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Color(0xFF9747FF),
+                              ),
+                              MediaQuery.of(context).size.width / 2.5,
+                              45,
+                              () async {
+                                final result = await showTimePicker(
+                                  context: context,
+                                  initialTime:
+                                      const TimeOfDay(hour: 00, minute: 00),
+                                );
+                                if (result != null) {
+                                  endTimeController.text =
+                                      result.format(context) ??
+                                          const TimeOfDay(hour: 00, minute: 00)
+                                              .format(context);
+                                }
+                              },
+                              true,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'End time',
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        const Gap(7),
-                        CustomTextField(
-                          endTimeController,
-                          '12:00 AM',
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Color(0xFF9747FF),
-                          ),
-                          MediaQuery.of(context).size.width / 2.5,
-                          45,
-                          () async {
-                            final result = await showTimePicker(
-                              context: context,
-                              initialTime:
-                                  const TimeOfDay(hour: 00, minute: 00),
+                    const Gap(15),
+                    const Text(
+                      'Priority',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    const Gap(7),
+                    Wrap(
+                      children: List.generate(
+                        priorities.length,
+                        (int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            child: ChoiceChip(
+                              labelStyle: const TextStyle(fontSize: 12),
+                              label: Text(
+                                priorities[index],
+                              ),
+                              selected: _priorityIndex == index,
+                              onSelected: (selected) {
+                                setState(() {
+                                  _priorityIndex = selected ? index : null;
+                                });
+                              },
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                    const Gap(15),
+                    const Text(
+                      'Description',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    CustomTextField(
+                      descriptionController,
+                      'Enter some description',
+                      null,
+                      double.infinity,
+                      120,
+                      () {},
+                      false,
+                    ),
+                    const Gap(8),
+                    Center(
+                      child: InkWell(
+                        onTap: () {
+                          if (_categoryIndex == null ||
+                              _priorityIndex == null ||
+                              titleController.text.isEmpty ||
+                              dateTimeController.text.isEmpty ||
+                              startTimeController.text.isEmpty ||
+                              endTimeController.text.isEmpty ||
+                              descriptionController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'One of the fields are empty, Please fill them all!')));
+                          } else {
+                            TodoModel todo = TodoModel(
+                              created_at: DateTime.now().toString(),
+                              title: titleController.text.trim(),
+                              description: descriptionController.text.trim(),
+                              start_time: startTimeController.text.trim(),
+                              end_time: endTimeController.text.trim(),
+                              category: options[_categoryIndex!].toLowerCase(),
+                              priority:
+                                  priorities[_priorityIndex!].toLowerCase(),
+                              created_by:
+                                  Supabase.instance.client.auth.currentUser!.id,
+                              do_day: dateTimeController.text.trim(),
+                              is_completed: false,
                             );
-                            if (result != null) {
-                              endTimeController.text =
-                                  result?.format(context) ??
-                                      const TimeOfDay(hour: 00, minute: 00)
-                                          .format(context);
-                            }
-                          },
-                          true,
+                            print('uploaded to db $todo');
+                            context.read<TodoBloc>().add(TodoInsert(todo));
+                            context.pushReplacementNamed(RouteNames.home.name);
+                          }
+
+                          // print('category tried ${BlocProvider.of<SelectorCubit>(context).state}');
+                          // print('priority tried ${BlocProvider.of<SelectorCubit>(context).state}');
+                        },
+                        child: Container(
+                          height: 40,
+                          width: 193,
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF9747FF),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.todo != null
+                                  ? 'Update task'
+                                  : 'Create task',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-                const Gap(15),
-                const Text(
-                  'Priority',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const Gap(7),
-                Wrap(
-                  children: List.generate(
-                    priorities.length,
-                    (int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 5, right: 5),
-                        child: ChoiceChip(
-                          labelStyle: const TextStyle(fontSize: 12),
-                          label: Text(
-                            priorities[index],
-                          ),
-                          selected: _priorityIndex == index,
-                          onSelected: (selected) {
-                            setState(() {
-                              _priorityIndex = selected ? index : null;
-                            });
-                          },
-                        ),
-                      );
-                    },
-                  ).toList(),
-                ),
-                const Gap(15),
-                const Text(
-                  'Description',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                CustomTextField(
-                  descriptionController,
-                  'Enter some description',
-                  null,
-                  double.infinity,
-                  120,
-                  () {},
-                  false,
-                ),
-                const Gap(8),
-                Center(
-                  child: InkWell(
-                    onTap: () {
-                      if (_categoryIndex == null ||
-                          _priorityIndex == null ||
-                          titleController.text.isEmpty ||
-                          dateTimeController.text.isEmpty ||
-                          startTimeController.text.isEmpty ||
-                          endTimeController.text.isEmpty ||
-                          descriptionController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text(
-                                'One of the fields are empty, Please fill them all!')));
-                      } else {
-                        TodoModel todo = TodoModel(
-                          created_at: DateTime.now().toString(),
-                          title: titleController.text.trim(),
-                          description: descriptionController.text.trim(),
-                          start_time: startTimeController.text.trim(),
-                          end_time: endTimeController.text.trim(),
-                          category: options[_categoryIndex!].toLowerCase(),
-                          priority: priorities[_priorityIndex!].toLowerCase(),
-                          created_by:
-                              Supabase.instance.client.auth.currentUser!.id,
-                          do_day: dateTimeController.text.trim(),
-                          is_completed: false,
-                        );
-                        print('uploaded to db $todo');
-                        context.read<TodoBloc>().add(TodoInsert(todo));
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
-                      }
-
-                      // print('category tried ${BlocProvider.of<SelectorCubit>(context).state}');
-                      // print('priority tried ${BlocProvider.of<SelectorCubit>(context).state}');
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 193,
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF9747FF),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Create task',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
         imgAdress: 'assets/images/createTodoBack.png',
       ),

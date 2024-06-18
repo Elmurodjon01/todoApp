@@ -3,20 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
-import 'package:todoapp/bloc/cubit/toggle_cubit.dart';
-import 'package:todoapp/bloc/todo_bloc/bloc/todo_bloc.dart';
-import 'package:todoapp/constants/apis.dart';
-import 'package:todoapp/data/provider/auth_provider.dart';
-import 'package:todoapp/data/provider/todo_provider.dart';
-import 'package:todoapp/data/repository/auth_repo.dart';
-import 'package:todoapp/data/repository/todo_repo.dart';
-import 'package:todoapp/presentation/UI/addScreen.dart';
+import 'package:todoapp/bloc/authentication/auth_bloc.dart';
+import 'package:todoapp/bloc/toggle/toggle_cubit.dart';
+import 'package:todoapp/bloc/todo_crud/bloc/todo_bloc.dart';
+import 'package:todoapp/bloc/user_info/bloc/user_info_bloc.dart';
+import 'package:todoapp/data/remote/userinfo_provider.dart';
+import 'package:todoapp/repository/auth/auth_repo.dart';
+import 'package:todoapp/repository/todo_crud/todo_repo.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
-import 'package:todoapp/hive/database.dart';
-import 'package:todoapp/model/todoModel/note_model.dart';
 import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
+import 'package:todoapp/repository/user_info/userinfo_repo.dart';
+import 'package:todoapp/res/constants/apis.dart';
+import 'package:todoapp/routes/go_router.dart';
+
+import 'data/model/todoModel/note_model.dart';
+import 'data/remote/auth_provider.dart';
+import 'data/remote/todo_provider.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -89,7 +92,6 @@ void main() async {
   );
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (BuildContext context) => ThemeProvider()),
-    ChangeNotifierProvider(create: (BuildContext context) => Database()),
   ], child: const MyApp()));
 }
 
@@ -104,7 +106,6 @@ class _MyAppState extends State<MyApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
-  late String userId;
 
   @override
   void initState() {
@@ -125,6 +126,9 @@ class _MyAppState extends State<MyApp> {
         ),
         RepositoryProvider(
           create: (context) => TodoRepository(TodoProvider()),
+        ),
+        RepositoryProvider(
+          create: (context) => UserInfoRepo(UserInfoProvider()),
         )
       ],
       child: MultiBlocProvider(
@@ -142,16 +146,22 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
             create: (context) => ToggleCubit(),
           ),
+          BlocProvider(
+            create: (context) => UserInfoBloc(
+              context.read<UserInfoRepo>(),
+            )..add(LoadUserInfo()),
+          ),
         ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
+        child: MaterialApp.router(
           theme: themeProvider.currentTheme,
-          initialRoute: userId.isEmpty == true ? '/' : '/home',
-          routes: {
-            '/': (context) => const LandingScreen(),
-            '/home': (context) => const HomeScreen(),
-            '/addScreen': (context) => const AddScreen(),
-          },
+          debugShowCheckedModeBanner: false,
+          routerConfig: goRouter,
+          // initialRoute: userId.isEmpty == true ? '/' : '/home',
+          // routes: {
+          //   '/': (context) => const LandingScreen(),
+          //   '/home': (context) => const HomeScreen(),
+          //   // '/addScreen': (context) => const AddScreen(),
+          // },
         ),
       ),
     );

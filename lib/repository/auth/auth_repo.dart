@@ -1,5 +1,7 @@
-import 'package:todoapp/data/provider/auth_provider.dart';
-import 'package:todoapp/model/user/user_model.dart';
+
+
+import '../../data/model/user/user_model.dart';
+import '../../data/remote/auth_provider.dart';
 
 class AuthRepo {
   AuthProvider authProvider;

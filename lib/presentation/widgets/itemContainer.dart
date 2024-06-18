@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
 
-import 'package:todoapp/constants/constants.dart';
+import '../../res/constants/constants.dart';
+
 
 class ItemContainer extends StatelessWidget {
   String label;

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:todoapp/bloc/auth_bloc/auth_bloc.dart';
-import 'package:todoapp/bloc/auth_bloc/auth_event.dart';
-import 'package:todoapp/bloc/auth_bloc/auth_state.dart';
-import 'package:todoapp/model/user/user_model.dart';
+import 'package:todoapp/bloc/authentication/auth_bloc.dart';
+import 'package:todoapp/bloc/authentication/auth_event.dart';
+import 'package:todoapp/bloc/authentication/auth_state.dart';
+import 'package:todoapp/data/model/user/user_model.dart';
 import 'package:todoapp/presentation/UI/auth_screen/custom_button.dart';
 import 'package:todoapp/presentation/UI/auth_screen/signup_screen.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
@@ -64,7 +64,7 @@ class LoginScreen extends HookWidget {
                                 controller: emailController,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'email@provider.com',
+                                  hintText: 'email@remote.com',
                                 ),
                               ),
                             ),

@@ -1,5 +1,6 @@
-import 'package:todoapp/data/provider/todo_provider.dart';
-import 'package:todoapp/model/todo_model/todo_model.dart';
+
+import '../../data/model/todo_model/todo_model.dart';
+import '../../data/remote/todo_provider.dart';
 
 class TodoRepository {
   final TodoProvider todoProvider;

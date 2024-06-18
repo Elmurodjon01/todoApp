@@ -17,7 +17,7 @@ class SavePreference {
 
 enum ThemeType { light, dark }
 
-//Theme provider
+//Theme remote
 class ThemeProvider extends ChangeNotifier {
   SavePreference pre = SavePreference();
   ThemeData currentTheme = lightTheme;
