@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:todoapp/data/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
+import 'package:todoapp/presentation/helper/hour_formatter.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
 
 class DetailPage extends StatelessWidget {
@@ -17,7 +18,7 @@ class DetailPage extends StatelessWidget {
   ];
   List<String> allDates = [];
   void addAllDates(String date1, date2, date3) {
-    allDates.addAll([date1, date2, date3]);
+    allDates.addAll([date1, formatTime(stringToTimeOfDay(date2)), formatTime(stringToTimeOfDay(date3))]);
   }
 
   final DateFormat dateFormatter = DateFormat('yyyy-MM-dd');

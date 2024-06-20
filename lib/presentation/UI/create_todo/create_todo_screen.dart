@@ -8,8 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/todo_crud/bloc/todo_bloc.dart';
 import 'package:todoapp/data/model/todo_model/todo_model.dart';
+import 'package:todoapp/presentation/helper/hour_formatter.dart';
 import 'package:todoapp/presentation/helper/index_helper.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
+import 'package:todoapp/presentation/widgets/toast.dart';
 import 'package:todoapp/routes/go_router.dart';
 
 class CreateTodoScreen extends StatefulWidget {
@@ -60,12 +62,6 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
     super.initState();
   }
 
-  String _formatTime(TimeOfDay time) {
-    String period = time.period == DayPeriod.am ? 'AM' : 'PM';
-    int hour = time.hourOfPeriod;
-    String minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute $period';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +190,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                                 );
                                 if (result != null) {
                                   startTimeController.text =
-                                      _formatTime(result);
+                                      formatTime(result);
                                 }
                               },
                               true,
@@ -225,7 +221,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                                       const TimeOfDay(hour: 00, minute: 00),
                                 );
                                 if (result != null) {
-                                  endTimeController.text = _formatTime(result);
+                                  endTimeController.text = formatTime(result);
                                 }
                               },
                               true,
@@ -289,6 +285,8 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                               dateTimeController.text.isEmpty ||
                               startTimeController.text.isEmpty ||
                               endTimeController.text.isEmpty ||
+                              _categoryIndex.value != null ||
+                              _priorityIndex.value != null ||
                               descriptionController.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -312,11 +310,12 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                             );
                             print('uploaded to db $todo');
                             widget.todo != null
-                                ? context.read<TodoBloc>().add(TodoUpdate(todo))
+                                ?  Toast().showToast("This function is not implemented yet:(", context)
+                                //context.read<TodoBloc>().add(TodoUpdate(todo))
                                 : context
                                     .read<TodoBloc>()
                                     .add(TodoInsert(todo));
-                            context.pushReplacementNamed(RouteNames.home.name);
+                           context.pushReplacementNamed(RouteNames.home.name);
                           }
 
                           // print('category tried ${BlocProvider.of<SelectorCubit>(context).state}');

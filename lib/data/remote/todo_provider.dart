@@ -92,29 +92,31 @@ class TodoProvider {
 
   Future<void> updateTodo(TodoModel todo) async {
     try {
-      await http.patch(
-        Uri.parse(_updateUrl(todo.id)),
-        headers: {
-          "apikey": anonKey,
-          "Authorization": "Bearer $userToken",
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal",
-        },
-        body: jsonEncode({
-          "id": todo.id,
+      final res = await Supabase.instance.client
+  .from('todos')
+  .update({
+      "id": todo.id,
           "title": todo.title,
           "description": todo.description,
-          "start_time": todo.start_time,
-          "end_time": todo.end_time,
-          "is_completed": "false",
+          "start_time": "12:00",
+          "end_time": "12:00",
+          "is_completed": false,  // assuming it's a boolean
           "category": todo.category.toLowerCase(),
           "priority": todo.priority.toLowerCase(),
           "created_by": todo.created_by,
           "do_day": todo.do_day,
-          "created_at": todo.created_at,
-        }),
-      );
+          "created_at": DateTime.now().toIso8601String(),
+        })
+  .eq('id', todo.id);
+     
+       if (res.statusCode == 200 || res.statusCode == 204) {
+      print('fff Update successful');
+    } else {
+      print('fff Failed to update: ${res.statusCode}');
+      print('fff Response: ${res.body}');
+    }
     } catch (e) {
+      print('fff update method error ${e}');
       throw e.toString();
     }
   }

@@ -10,6 +10,7 @@ import 'package:todoapp/bloc/user_info/bloc/user_info_bloc.dart';
 import 'package:todoapp/data/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/UI/home_screen/custom_box.dart';
 import 'package:todoapp/presentation/UI/home_screen/todo_tile.dart';
+import 'package:todoapp/presentation/helper/hour_formatter.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
 import 'package:todoapp/routes/go_router.dart';
 
@@ -116,7 +117,7 @@ class HomeScreen extends StatelessWidget {
                                       .add(TodoRemove(state.todos, todo)),
                                   todo: todo.title,
                                   dateTime:
-                                      '${todo.start_time}AM to ${todo.end_time}PM',
+                                      '${formatTime(stringToTimeOfDay(todo.start_time))} to ${formatTime(stringToTimeOfDay(todo.end_time))}',
                                   priviousTodoStatus: todo.is_completed,
                                   // newTodoStatus: state,
                                 ),

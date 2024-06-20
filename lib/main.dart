@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/authentication/auth_bloc.dart';
@@ -14,17 +13,10 @@ import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
 import 'package:todoapp/repository/user_info/userinfo_repo.dart';
 import 'package:todoapp/res/constants/apis.dart';
 import 'package:todoapp/routes/go_router.dart';
-
-import 'data/model/todoModel/note_model.dart';
 import 'data/remote/auth_provider.dart';
 import 'data/remote/todo_provider.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(NoteModelAdapter());
-
-  await Hive.openBox<NoteModel>('Notes');
-  await Hive.openBox('theme');
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: url,
