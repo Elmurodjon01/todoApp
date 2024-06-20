@@ -1,9 +1,9 @@
-
 import '../../data/model/todo_model/todo_model.dart';
 import '../../data/remote/todo_provider.dart';
 
 class TodoRepository {
   final TodoProvider todoProvider;
+
   TodoRepository(this.todoProvider);
 
   Future<List<TodoModel>> fetchTodos() async {
@@ -22,5 +22,9 @@ class TodoRepository {
 
   Future<void> markCompleted(TodoModel todo) async {
     await todoProvider.markCompleted(todo);
+  }
+
+  Future<void> updateTodo(TodoModel todo) async {
+    await todoProvider.updateTodo(todo);
   }
 }

@@ -4,25 +4,25 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/todo_crud/bloc/todo_bloc.dart';
 import 'package:todoapp/data/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/helper/index_helper.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
-import 'package:todoapp/res/constants/constants.dart';
 import 'package:todoapp/routes/go_router.dart';
 
 class CreateTodoScreen extends StatefulWidget {
   const CreateTodoScreen({Key? key, this.todo}) : super(key: key);
   final TodoModel? todo;
+
   @override
   State<CreateTodoScreen> createState() => _CreateTodoScreenState();
 }
 
 class _CreateTodoScreenState extends State<CreateTodoScreen> {
-  int? _priorityIndex;
-  int? _categoryIndex;
+  ValueNotifier<int?> _priorityIndex = ValueNotifier(null);
+  ValueNotifier<int?> _categoryIndex = ValueNotifier(null);
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final dateTimeController = TextEditingController();
@@ -51,34 +51,42 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
           dateFormatter.format(DateTime.parse(widget.todo!.created_at));
       startTimeController.text = widget.todo!.start_time;
       endTimeController.text = widget.todo!.end_time;
-      _priorityIndex =
+      _priorityIndex.value =
           checkIndex(widget.todo?.priority, i: 1, null, priorities);
-      _categoryIndex = checkIndex(widget.todo?.category, options, null, i: 0);
+      _categoryIndex.value =
+          checkIndex(widget.todo?.category, options, null, i: 0);
     }
 
     super.initState();
+  }
+
+  String _formatTime(TimeOfDay time) {
+    String period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    int hour = time.hourOfPeriod;
+    String minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute $period';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomBackground(
-        child: Column(
-          children: [
-            const Gap(50),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Icons.arrow_back_ios),
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Gap(50),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context.pop(),
+                      icon: const Icon(Icons.arrow_back_ios),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SingleChildScrollView(
-              child: Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,18 +118,21 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                         (int index) {
                           return Padding(
                             padding: const EdgeInsets.only(left: 5, right: 5),
-                            child: ChoiceChip(
-                              labelStyle: const TextStyle(fontSize: 12),
-                              label: Text(
-                                options[index],
-                              ),
-                              selected: _categoryIndex == index,
-                              onSelected: (value) {
-                                setState(() {
-                                  _categoryIndex = value ? index : null;
-                                });
-                              },
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: _categoryIndex,
+                                builder: (context, value, child) {
+                                  return ChoiceChip(
+                                    labelStyle: const TextStyle(fontSize: 12),
+                                    label: Text(
+                                      options[index],
+                                    ),
+                                    selected: value == index,
+                                    onSelected: (value) {
+                                      _categoryIndex.value =
+                                          value ? index : null;
+                                    },
+                                  );
+                                }),
                           );
                         },
                       ).toList(),
@@ -177,14 +188,13 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                               () async {
                                 final result = await showTimePicker(
                                   context: context,
-                                  initialTime:
-                                      const TimeOfDay(hour: 00, minute: 00),
+                                  initialTime: startTimeController.text == null
+                                      ? TimeOfDay.now()
+                                      : const TimeOfDay(hour: 00, minute: 00),
                                 );
                                 if (result != null) {
                                   startTimeController.text =
-                                      result.format(context) ??
-                                          const TimeOfDay(hour: 00, minute: 00)
-                                              .format(context);
+                                      _formatTime(result);
                                 }
                               },
                               true,
@@ -215,10 +225,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                                       const TimeOfDay(hour: 00, minute: 00),
                                 );
                                 if (result != null) {
-                                  endTimeController.text =
-                                      result.format(context) ??
-                                          const TimeOfDay(hour: 00, minute: 00)
-                                              .format(context);
+                                  endTimeController.text = _formatTime(result);
                                 }
                               },
                               true,
@@ -239,18 +246,21 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                         (int index) {
                           return Padding(
                             padding: const EdgeInsets.only(left: 5, right: 5),
-                            child: ChoiceChip(
-                              labelStyle: const TextStyle(fontSize: 12),
-                              label: Text(
-                                priorities[index],
-                              ),
-                              selected: _priorityIndex == index,
-                              onSelected: (selected) {
-                                setState(() {
-                                  _priorityIndex = selected ? index : null;
-                                });
-                              },
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: _priorityIndex,
+                                builder: (context, value, child) {
+                                  return ChoiceChip(
+                                    labelStyle: const TextStyle(fontSize: 12),
+                                    label: Text(
+                                      priorities[index],
+                                    ),
+                                    selected: value == index,
+                                    onSelected: (selected) {
+                                      _priorityIndex.value =
+                                          selected ? index : null;
+                                    },
+                                  );
+                                }),
                           );
                         },
                       ).toList(),
@@ -291,16 +301,21 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                               description: descriptionController.text.trim(),
                               start_time: startTimeController.text.trim(),
                               end_time: endTimeController.text.trim(),
-                              category: options[_categoryIndex!].toLowerCase(),
-                              priority:
-                                  priorities[_priorityIndex!].toLowerCase(),
+                              category:
+                                  options[_categoryIndex.value!].toLowerCase(),
+                              priority: priorities[_priorityIndex.value!]
+                                  .toLowerCase(),
                               created_by:
                                   Supabase.instance.client.auth.currentUser!.id,
                               do_day: dateTimeController.text.trim(),
                               is_completed: false,
                             );
                             print('uploaded to db $todo');
-                            context.read<TodoBloc>().add(TodoInsert(todo));
+                            widget.todo != null
+                                ? context.read<TodoBloc>().add(TodoUpdate(todo))
+                                : context
+                                    .read<TodoBloc>()
+                                    .add(TodoInsert(todo));
                             context.pushReplacementNamed(RouteNames.home.name);
                           }
 
@@ -334,8 +349,8 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         imgAdress: 'assets/images/createTodoBack.png',
       ),

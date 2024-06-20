@@ -6,20 +6,21 @@ class Flag extends StatelessWidget {
     required this.label,
     required this.imgAddress,
   });
+
   final String label;
   final String imgAddress;
+
   @override
   Widget build(BuildContext context) {
     print('img address $imgAddress');
     return Container(
-      width: 85,
-      height: 45,
+      width: 100,
+      height: 25,
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: Colors.grey,
         image: DecorationImage(
           image: AssetImage(
-            'assets/icons/low.png',
+            imgAddress,
           ),
           fit: BoxFit.cover,
         ),

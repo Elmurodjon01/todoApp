@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:todoapp/bloc/authentication/auth_bloc.dart';
 import 'package:todoapp/bloc/authentication/auth_event.dart';
 import 'package:todoapp/bloc/todo_crud/bloc/todo_bloc.dart';
 import 'package:todoapp/bloc/user_info/bloc/user_info_bloc.dart';
 import 'package:todoapp/data/model/todo_model/todo_model.dart';
-import 'package:todoapp/data/model/user/user_info_model.dart';
 import 'package:todoapp/presentation/UI/home_screen/custom_box.dart';
 import 'package:todoapp/presentation/UI/home_screen/todo_tile.dart';
-import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/routes/go_router.dart';
+
 part 'flag.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -22,9 +20,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<TodoBloc>().add(TodoLoad());
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    context.read<TodoBloc>().add(TodoLoad());
     return Scaffold(
       body: CustomBackground(
         child: Padding(
@@ -55,10 +53,21 @@ class HomeScreen extends StatelessWidget {
                           }
                         },
                       ),
-                      const Text(
-                        'You have work today',
-                        style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w300),
+                      BlocBuilder<TodoBloc, TodoState>(
+                        builder: (context, state) {
+                          if (state is TodoEmpty) {
+                            return const Text(
+                              'You have no work today',
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.w300),
+                            );
+                          }
+                          return const Text(
+                            'You have work today',
+                            style: TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.w300),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -104,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                                   },
                                   onDelete: () => context
                                       .read<TodoBloc>()
-                                      .add(TodoRemove(todo)),
+                                      .add(TodoRemove(state.todos, todo)),
                                   todo: todo.title,
                                   dateTime:
                                       '${todo.start_time}AM to ${todo.end_time}PM',
@@ -140,11 +149,16 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             children: [
                               const Gap(70),
-                              Image.asset(
-                                'assets/icons/no_todos.png',
+                              Lottie.asset(
+                                'assets/images/empty.json',
                                 height: 222,
                                 width: 222,
                               ),
+                              // Image.asset(
+                              //   'assets/icons/no_todos.png',
+                              //   height: 222,
+                              //   width: 222,
+                              // ),
                               const Text('There is no todos for today'),
                             ],
                           ),

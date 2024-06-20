@@ -10,8 +10,6 @@ import 'package:todoapp/bloc/user_info/bloc/user_info_bloc.dart';
 import 'package:todoapp/data/remote/userinfo_provider.dart';
 import 'package:todoapp/repository/auth/auth_repo.dart';
 import 'package:todoapp/repository/todo_crud/todo_repo.dart';
-import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
-import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
 import 'package:todoapp/presentation/Theme/Apptheme_provider.dart';
 import 'package:todoapp/repository/user_info/userinfo_repo.dart';
 import 'package:todoapp/res/constants/apis.dart';
@@ -20,64 +18,6 @@ import 'package:todoapp/routes/go_router.dart';
 import 'data/model/todoModel/note_model.dart';
 import 'data/remote/auth_provider.dart';
 import 'data/remote/todo_provider.dart';
-
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Supabase.initialize(
-//     url: url,
-//     anonKey: anonKey,
-//   );
-//   runApp(MaterialApp(home: HomeApp()));
-// }
-
-// class HomeApp extends StatelessWidget {
-//   const HomeApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final user = UserModel(
-//         email: 'elmurodjon@inha.edu',
-//         password: 'password',
-//         username: 'username');
-
-//     return RepositoryProvider(
-//       create: (context) => AuthRepo(AuthProvider()),
-//       child: BlocProvider(
-//         create: (context) {
-//           print('bloc started');
-//           return AuthBloc(context.read<AuthRepo>())..add(SignInEvent(user));
-//         },
-//         child: Scaffold(
-//           appBar: AppBar(
-//             backgroundColor: Colors.red,
-//           ),
-//           body: BlocBuilder<AuthBloc, AuthBlocState>(builder: (context, state) {
-//             if (state is AuthInitial) {
-//               return const Center(
-//                 child: CircularProgressIndicator.adaptive(),
-//               );
-//             }
-//             if (state is AuthFailure) {
-//               return const Center(
-//                 child: Text('error'),
-//               );
-//             }
-//             if (state is AuthSignedIn) {
-//               return Text(state.userToken);
-//             }
-//             return const Center(
-//               child: CircularProgressIndicator.adaptive(),
-//             );
-//           }),
-//           floatingActionButton: FloatingActionButton(
-//             onPressed: () {},
-//             child: const Icon(Icons.replay_outlined),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 void main() async {
   await Hive.initFlutter();
@@ -141,7 +81,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
             create: (context) => TodoBloc(
               context.read<TodoRepository>(),
-            ),
+            )..add(TodoLoad()),
           ),
           BlocProvider(
             create: (context) => ToggleCubit(),
