@@ -17,6 +17,9 @@ final class TodoLoading extends TodoState {}
 
 final class TodoInitial extends TodoState {}
 
-final class TodoEmpty extends TodoState {
+final class TodoEmpty extends TodoState {}
 
+final class TodoFiltered extends TodoState {
+  List<TodoModel> filteredTodos;
+  TodoFiltered(this.filteredTodos);
 }

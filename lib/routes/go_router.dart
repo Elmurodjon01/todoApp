@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todoapp/data/model/todo_model/todo_model.dart';
 import 'package:todoapp/presentation/UI/create_todo/create_todo_screen.dart';
 import 'package:todoapp/presentation/UI/detail_page/detail_page.dart';
+import 'package:todoapp/presentation/UI/home_screen/error_page.dart';
 import 'package:todoapp/presentation/UI/home_screen/home_screen.dart';
 import 'package:todoapp/presentation/UI/landing_screen/landing_screen.dart';
 
@@ -16,6 +17,11 @@ late String userId;
 
 final goRouter = GoRouter(
   initialLocation: userId.isEmpty == true ? '/' : '/home',
+  errorBuilder: (context, state) {
+    return ErrorPage(
+      error: state.error.toString(),
+    );
+  },
   routes: [
     GoRoute(
       path: '/',

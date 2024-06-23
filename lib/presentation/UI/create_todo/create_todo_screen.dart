@@ -63,7 +63,6 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,7 +135,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                     ),
                     const Gap(15),
                     const Text(
-                      'Date & Time',
+                      'Date',
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     const Gap(7),
@@ -190,8 +189,7 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                                       : const TimeOfDay(hour: 00, minute: 00),
                                 );
                                 if (result != null) {
-                                  startTimeController.text =
-                                      formatTime(result);
+                                  startTimeController.text = formatTime(result);
                                 }
                               },
                               true,
@@ -276,22 +274,22 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                       () {},
                       false,
                     ),
-                    const Gap(8),
+                    const Gap(12),
                     Center(
                       child: InkWell(
                         onTap: () {
-
-                            
                           if (_categoryIndex.value == null || //groceries
                               _priorityIndex.value == null || // medium
                               titleController.text.isEmpty || // fuhf
                               dateTimeController.text.isEmpty || //
-                              startTimeController.text.isEmpty || //2024-06-23 00:00:00.000
+                              startTimeController
+                                  .text.isEmpty || //2024-06-23 00:00:00.000
                               endTimeController.text.isEmpty || // 5: 35 AM
-                         
+
                               descriptionController.text.isEmpty) {
-                                Toast().showToast('One of the fields is empty, Please fill them all!', context);
-                           
+                            Toast().showToast(
+                                'One of the fields is empty, Please fill them all!',
+                                context);
                           } else {
                             TodoModel todo = TodoModel(
                               created_at: DateTime.now().toString(),
@@ -309,13 +307,15 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                               is_completed: false,
                             );
                             widget.todo != null
-                                ?  Toast().showToast("This function is not implemented yet:(", context)
+                                ? Toast().showToast(
+                                    "This function is not implemented yet:(",
+                                    context)
                                 //context.read<TodoBloc>().add(TodoUpdate(todo))
                                 : context
                                     .read<TodoBloc>()
                                     .add(TodoInsert(todo));
-                                    context.pop();
-                       //    context.pushReplacementNamed(RouteNames.home.name);
+                            context.pop();
+                            //    context.pushReplacementNamed(RouteNames.home.name);
                           }
                         },
                         child: Container(

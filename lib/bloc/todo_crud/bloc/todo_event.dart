@@ -29,3 +29,8 @@ final class TodoUpdate extends TodoEvent {
 
   TodoUpdate(this.todo);
 }
+
+final class TodoFilter extends TodoEvent {
+  final String created_at;
+  TodoFilter(this.created_at);
+}

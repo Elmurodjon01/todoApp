@@ -18,7 +18,11 @@ class DetailPage extends StatelessWidget {
   ];
   List<String> allDates = [];
   void addAllDates(String date1, date2, date3) {
-    allDates.addAll([date1, formatTime(stringToTimeOfDay(date2)), formatTime(stringToTimeOfDay(date3))]);
+    allDates.addAll([
+      date1,
+      formatTime(stringToTimeOfDay(date2)),
+      formatTime(stringToTimeOfDay(date3))
+    ]);
   }
 
   final DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
@@ -46,10 +50,13 @@ class DetailPage extends StatelessWidget {
                 const Gap(15),
                 Row(
                   children: [
-                    Text(
-                      todo!.title,
-                      style: const TextStyle(
-                          fontSize: 32, fontWeight: FontWeight.w600),
+                    Expanded(
+                      child: Text(
+                        todo!.title,
+                        maxLines: 4,
+                        style: const TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w600),
+                      ),
                     ),
                     Flag(
                         label: todo!.priority,

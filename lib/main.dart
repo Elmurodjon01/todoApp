@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
             create: (context) => TodoBloc(
               context.read<TodoRepository>(),
-            )..add(TodoLoad()),
+            ),
           ),
           BlocProvider(
             create: (context) => ToggleCubit(),
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
             create: (context) => UserInfoBloc(
               context.read<UserInfoRepo>(),
-            )..add(LoadUserInfo()),
+            ),
           ),
         ],
         child: MaterialApp.router(

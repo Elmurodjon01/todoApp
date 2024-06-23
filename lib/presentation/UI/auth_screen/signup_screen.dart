@@ -21,7 +21,6 @@ class SignUpScreen extends HookWidget {
     final passwordController = useTextEditingController();
     final usernameController = useTextEditingController();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: CustomBackground(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -49,6 +48,14 @@ class SignUpScreen extends HookWidget {
                       Form(
                         child: Column(
                           children: [
+                            const Text(
+                              'Sign Up!',
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Gap(15),
                             Container(
                               height: 50,
                               margin:

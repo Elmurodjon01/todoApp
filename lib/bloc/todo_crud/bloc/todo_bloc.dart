@@ -16,6 +16,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoRemove>(_removeTodo);
     on<TodoMarkCompleted>(_markCompleted);
     on<TodoUpdate>(_updateTodo);
+    on<TodoFilter>(_todoFilterLoad);
   }
 
   void _todoLoad(TodoLoad event, Emitter<TodoState> emit) async {
@@ -26,7 +27,23 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       if (res.isEmpty) {
         emit(TodoEmpty());
       } else {
+        res.sort((a, b) => a.id.compareTo(b.id));
         emit(TodoLoaded(res));
+      }
+    } catch (e) {
+      emit(TodoFailure('todo bloc error => $e'));
+    }
+  }
+
+  void _todoFilterLoad(TodoFilter event, Emitter<TodoState> emit) async {
+    emit(TodoLoading());
+    try {
+      final res = await todoRepository.fetchFilter(event.created_at);
+      if (res.isEmpty) {
+        emit(TodoEmpty());
+      } else {
+        res.sort((a, b) => a.id.compareTo(b.id));
+        emit(TodoFiltered(res));
       }
     } catch (e) {
       emit(TodoFailure('todo bloc error => $e'));
@@ -50,16 +67,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _removeTodo(TodoRemove event, Emitter<TodoState> emit) async {
-    // emit(TodoLoading());
     try {
       await todoRepository.remoteTodo(event.todo);
-      // final res = await todoRepository.fetchTodos();
-      // if (res.isEmpty) {
-      //   emit(TodoEmpty());
-      // } else {
+
       event.todos.remove(event.todo);
-      emit(TodoLoaded(event.todos));
-      // }
+      if (event.todos.isEmpty) {
+        emit(TodoEmpty());
+      } else {
+        emit(TodoLoaded(event.todos));
+      }
     } catch (e) {
       emit(TodoFailure('todo bloc error removing todo => $e'));
     }
@@ -73,6 +89,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       if (res.isEmpty) {
         emit(TodoEmpty());
       } else {
+        res.sort((a, b) => a.id.compareTo(b.id));
         emit(TodoLoaded(res));
       }
     } catch (e) {
