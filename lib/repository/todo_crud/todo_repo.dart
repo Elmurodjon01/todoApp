@@ -8,7 +8,11 @@ class TodoRepository {
 
   Future<List<TodoModel>> fetchTodos() async {
     final res = await todoProvider.fetchTodos();
-    print('todo function response : $res');
+    return res;
+  }
+
+  Future<List<TodoModel>> fetchFilter(String created_at) async {
+    final res = await todoProvider.fetchByDate(created_at);
     return res;
   }
 

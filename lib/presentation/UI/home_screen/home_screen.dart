@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:todoapp/bloc/authentication/auth_bloc.dart';
 import 'package:todoapp/bloc/authentication/auth_event.dart';
@@ -13,17 +14,30 @@ import 'package:todoapp/presentation/UI/home_screen/todo_tile.dart';
 import 'package:todoapp/presentation/helper/hour_formatter.dart';
 import 'package:todoapp/presentation/widgets/custom_background.dart';
 import 'package:todoapp/routes/go_router.dart';
-
+import 'package:intl/intl.dart';
 part 'flag.dart';
+part 'todo_cards.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    context.read<TodoBloc>().add(TodoLoad());
+    context.read<UserInfoBloc>().add(LoadUserInfo());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    context.read<TodoBloc>().add(TodoLoad());
+
     return Scaffold(
       body: CustomBackground(
         child: Padding(
@@ -44,10 +58,26 @@ class HomeScreen extends StatelessWidget {
                             return Text(state.error);
                           } else if (state is UserInfoLoadedState) {
                             final userInfo = state.userInfo;
-                            return Text(
-                              'Hello ${userInfo.username}',
-                              style: const TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Hello ${userInfo.username}',
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<AuthBloc>()
+                                        .add(AuthLoggedOut());
+                                    context
+                                        .pushNamed(RouteNames.landingPage.name);
+                                  },
+                                  icon: const Icon(Icons.logout),
+                                ),
+                              ],
                             );
                           } else {
                             return const CircularProgressIndicator.adaptive();
@@ -75,16 +105,53 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Cards(height: height, width: width),
                 const Gap(10),
-                InkWell(
-                  onTap: () {
-                    context.read<AuthBloc>().add(AuthLoggedOut());
-                    context.pushNamed(RouteNames.landingPage.name);
-                  },
-                  child: const Text(
-                    "Today's Tasks",
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Today's Tasks",
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () =>
+                              context.read<TodoBloc>().add(TodoLoad()),
+                          child: const Text(
+                            'All',
+                            style: TextStyle(
+                              color: Color(0xFF9747FF),
+                              decoration: TextDecoration.underline,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            final response = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2010),
+                              lastDate: DateTime(2050),
+                            );
+                            if (response != null) {
+                              String formattedFlutterDate =
+                                  DateFormat('yyyy-MM-dd').format(response);
+                              context
+                                  .read<TodoBloc>()
+                                  .add(TodoFilter(formattedFlutterDate));
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.calendar_month,
+                            color: Color(0xFF9747FF),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                SizedBox(
+                Container(
+                  padding: const EdgeInsets.only(bottom: 45),
                   width: double.infinity,
                   height: height / 1.8,
                   child: BlocBuilder<TodoBloc, TodoState>(
@@ -105,9 +172,6 @@ class HomeScreen extends StatelessWidget {
                                       RouteNames.createTodo.name,
                                       extra: todo),
                                   onChoose: (value) {
-                                    // context
-                                    //     .read<ToggleCubit>()
-                                    //     .triggerToggle(value!);
                                     context.read<TodoBloc>().add(
                                         TodoMarkCompleted(todo.copyWith(
                                             is_completed: value!)));
@@ -155,14 +219,49 @@ class HomeScreen extends StatelessWidget {
                                 height: 222,
                                 width: 222,
                               ),
-                              // Image.asset(
-                              //   'assets/icons/no_todos.png',
-                              //   height: 222,
-                              //   width: 222,
-                              // ),
-                              const Text('There is no todos for today'),
+                              const Text('Empty!'),
                             ],
                           ),
+                        );
+                      } else if (state is TodoFiltered) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: state.filteredTodos.length,
+                          itemBuilder: (context, index) {
+                            final todo = state.filteredTodos[index];
+                            return Stack(
+                              children: [
+                                TodoTile(
+                                  onTap: () => context.pushNamed(
+                                      RouteNames.detailPage.name,
+                                      extra: todo),
+                                  onEdit: () => context.pushNamed(
+                                      RouteNames.createTodo.name,
+                                      extra: todo),
+                                  onChoose: (value) {
+                                    context.read<TodoBloc>().add(
+                                        TodoMarkCompleted(todo.copyWith(
+                                            is_completed: value!)));
+                                  },
+                                  onDelete: () => context.read<TodoBloc>().add(
+                                      TodoRemove(state.filteredTodos, todo)),
+                                  todo: todo.title,
+                                  dateTime:
+                                      '${formatTime(stringToTimeOfDay(todo.start_time))} to ${formatTime(stringToTimeOfDay(todo.end_time))}',
+                                  priviousTodoStatus: todo.is_completed,
+                                  // newTodoStatus: state,
+                                ),
+                                Positioned(
+                                  top: 5,
+                                  right: 15,
+                                  child: Flag(
+                                    label: todo.priority,
+                                    imgAddress: imgType(todo.priority),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         );
                       }
                       return const Text('Something went wrong');
@@ -177,7 +276,7 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF9747FF),
         onPressed: () => context.pushNamed(RouteNames.createTodo.name),
         child: const Icon(
           Icons.add,
@@ -186,123 +285,6 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class Cards extends StatelessWidget {
-  const Cards({
-    super.key,
-    required this.height,
-    required this.width,
-  });
-
-  final double height;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(builder: (context, state) {
-      if (state is TodoLoading) {
-        return const CircularProgressIndicator.adaptive();
-      } else if (state is TodoFailure) {
-        return Text(state.error);
-      } else if (state is TodoLoaded) {
-        return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CustomBox(
-                  height: height,
-                  width: width,
-                  backColor: const Color(0xFFB4C4FF),
-                  imgUrl: 'assets/icons/speakericon.svg',
-                  title: 'Daily Task',
-                  count: todoCount(state.todos, 'dailytask'),
-                ),
-                CustomBox(
-                  height: height,
-                  width: width,
-                  backColor: const Color(0xFFCFF3E9),
-                  imgUrl: 'assets/icons/caricon.svg',
-                  title: 'Work',
-                  count: todoCount(state.todos, 'work'),
-                ),
-              ],
-            ),
-            const Gap(8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CustomBox(
-                  height: height,
-                  width: width,
-                  backColor: const Color(0xFF9747FF),
-                  imgUrl: 'assets/icons/gymicon.svg',
-                  title: 'Projects',
-                  count: todoCount(state.todos, 'project'),
-                ),
-                CustomBox(
-                  height: height,
-                  width: width,
-                  backColor: const Color(0xFFEDBE7D),
-                  imgUrl: 'assets/icons/bagIcon.svg',
-                  title: 'Groceries',
-                  count: todoCount(state.todos, "groceries"),
-                ),
-              ],
-            ),
-          ],
-        );
-      }
-      return Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomBox(
-                height: height,
-                width: width,
-                backColor: const Color(0xFFB4C4FF),
-                imgUrl: 'assets/icons/speakericon.svg',
-                title: 'Daily Task',
-                count: 0,
-              ),
-              CustomBox(
-                height: height,
-                width: width,
-                backColor: const Color(0xFFCFF3E9),
-                imgUrl: 'assets/icons/caricon.svg',
-                title: 'Work',
-                count: 0,
-              ),
-            ],
-          ),
-          const Gap(8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomBox(
-                height: height,
-                width: width,
-                backColor: const Color(0xFF9747FF),
-                imgUrl: 'assets/icons/gymicon.svg',
-                title: 'Projects',
-                count: 0,
-              ),
-              CustomBox(
-                height: height,
-                width: width,
-                backColor: const Color(0xFFEDBE7D),
-                imgUrl: 'assets/icons/bagIcon.svg',
-                title: 'Groceries',
-                count: 0,
-              ),
-            ],
-          ),
-        ],
-      );
-    });
   }
 }
 

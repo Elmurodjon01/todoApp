@@ -20,9 +20,8 @@ class LoginScreen extends HookWidget {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: CustomBackground(
-        imgAdress: 'assets/images/login_background.png',
+        imgAdress: 'assets/images/login_background.jpg',
         child: BlocConsumer<AuthBloc, AuthBlocState>(
           listener: (context, state) {
             if (state is AuthError) {
@@ -47,6 +46,14 @@ class LoginScreen extends HookWidget {
                     Form(
                       child: Column(
                         children: [
+                          const Text(
+                            'Welcom Back!',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Gap(30),
                           Container(
                             height: 50,
                             margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -84,6 +91,7 @@ class LoginScreen extends HookWidget {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: TextFormField(
+                                obscureText: true,
                                 controller: passwordController,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
