@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/web.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todoapp/bloc/todo_crud/bloc/todo_bloc.dart';
@@ -279,19 +280,18 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                     Center(
                       child: InkWell(
                         onTap: () {
-                          if (_categoryIndex == null ||
-                              _priorityIndex == null ||
-                              titleController.text.isEmpty ||
-                              dateTimeController.text.isEmpty ||
-                              startTimeController.text.isEmpty ||
-                              endTimeController.text.isEmpty ||
-                              _categoryIndex.value != null ||
-                              _priorityIndex.value != null ||
+
+                            
+                          if (_categoryIndex.value == null || //groceries
+                              _priorityIndex.value == null || // medium
+                              titleController.text.isEmpty || // fuhf
+                              dateTimeController.text.isEmpty || //
+                              startTimeController.text.isEmpty || //2024-06-23 00:00:00.000
+                              endTimeController.text.isEmpty || // 5: 35 AM
+                         
                               descriptionController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'One of the fields are empty, Please fill them all!')));
+                                Toast().showToast('One of the fields is empty, Please fill them all!', context);
+                           
                           } else {
                             TodoModel todo = TodoModel(
                               created_at: DateTime.now().toString(),
@@ -308,18 +308,15 @@ class _CreateTodoScreenState extends State<CreateTodoScreen> {
                               do_day: dateTimeController.text.trim(),
                               is_completed: false,
                             );
-                            print('uploaded to db $todo');
                             widget.todo != null
                                 ?  Toast().showToast("This function is not implemented yet:(", context)
                                 //context.read<TodoBloc>().add(TodoUpdate(todo))
                                 : context
                                     .read<TodoBloc>()
                                     .add(TodoInsert(todo));
-                           context.pushReplacementNamed(RouteNames.home.name);
+                                    context.pop();
+                       //    context.pushReplacementNamed(RouteNames.home.name);
                           }
-
-                          // print('category tried ${BlocProvider.of<SelectorCubit>(context).state}');
-                          // print('priority tried ${BlocProvider.of<SelectorCubit>(context).state}');
                         },
                         child: Container(
                           height: 40,

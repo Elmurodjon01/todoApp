@@ -34,9 +34,16 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _insertTodo(TodoInsert event, Emitter<TodoState> emit) async {
-    emit(TodoLoading());
     try {
       await todoRepository.insertTodo(event.todo);
+      if (state is TodoLoaded) {
+        final currentState = state as TodoLoaded;
+        final updatedTodos = List<TodoModel>.from(currentState.todos)
+          ..add(event.todo);
+        emit(TodoLoaded(updatedTodos));
+      } else if (state is TodoEmpty) {
+        emit(TodoLoaded([event.todo]));
+      }
     } catch (e) {
       emit(TodoFailure('todo bloc error => $e'));
     }
