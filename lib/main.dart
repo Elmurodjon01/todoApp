@@ -88,12 +88,6 @@ class _MyAppState extends State<MyApp> {
           theme: themeProvider.currentTheme,
           debugShowCheckedModeBanner: false,
           routerConfig: goRouter,
-          // initialRoute: userId.isEmpty == true ? '/' : '/home',
-          // routes: {
-          //   '/': (context) => const LandingScreen(),
-          //   '/home': (context) => const HomeScreen(),
-          //   // '/addScreen': (context) => const AddScreen(),
-          // },
         ),
       ),
     );
